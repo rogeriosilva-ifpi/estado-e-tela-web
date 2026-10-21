@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<title>Ala B · estado e render()</title>
+<link rel="stylesheet" href="estilo.css">
+<header>
+  <h1>Ala B</h1>
+  <span class="medidor" id="medidor"></span>
+</header>
+<input id="busca" placeholder="buscar">
+<div id="app"></div>
+
+<script type="module">
+import { PACIENTES } from "./pacientes.js";
+import { medir } from "./medidor.js";
+
+const $ = (s) => document.querySelector(s);
+const app = $("#app");
+const busca = $("#busca");
+const estado = {
+  busca: "",
+  pacientes: [...PACIENTES],
+};
+
+// a tela inteira sai do estado, sempre
+function render() {
+  const t = estado.busca.toLowerCase();
+  const vis = estado.pacientes.filter((p) =>
+    p.nome.toLowerCase().includes(t));
+  const alto = estado.pacientes
+    .filter((p) => p.risco === "alto").length;
+  app.innerHTML = `
+    <p>${estado.pacientes.length} pacientes
+      · alto risco: ${alto}</p>
+    <ul>${vis.map((p) => `
+      <li data-id="${p.id}">
+        <b>${p.nome}</b> ${p.leito}
+        <input placeholder="anotação">
+        <button>Alta</button>
+      </li>`).join("")}
+    </ul>`;
+}
+
+busca.addEventListener("input", (e) => {
+  estado.busca = e.target.value;
+  render();
+});
+
+app.addEventListener("click", (e) => {
+  if (e.target.tagName !== "BUTTON") return;
+  const li = e.target.closest("li");
+  estado.pacientes = estado.pacientes
+    .filter((p) => p.id !== li.dataset.id);
+  render();
+});
+
+render();
+medir(app, $("#medidor"));
+</script>
+</html>

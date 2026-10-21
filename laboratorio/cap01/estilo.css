@@ -1,0 +1,13 @@
+/* Estilo mínimo das três versões da Ala B. */
+body { font: 16px/1.5 system-ui, sans-serif;
+  margin: 24px; max-width: 520px; }
+header { display: flex; gap: 12px;
+  align-items: baseline; flex-wrap: wrap; }
+.medidor { font: 13px ui-monospace, monospace;
+  color: #8a4520; background: #fdf3ec;
+  padding: 2px 6px; border-radius: 4px; }
+ul { list-style: none; padding: 0; }
+li { display: flex; gap: 8px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid #e3dccc; }
+li input { flex: 1; min-width: 0; }
+input, button { font: inherit; }

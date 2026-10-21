@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<title>Ala B · React</title>
+<link rel="stylesheet" href="estilo.css">
+<script type="importmap">
+{ "imports": {
+  "react": "https://esm.sh/react@19.3.1",
+  "react-dom/client":
+    "https://esm.sh/react-dom@19.3.1/client"
+} }
+</script>
+<header>
+  <h1>Ala B</h1>
+  <span class="medidor" id="medidor"></span>
+</header>
+<div id="app"></div>
+
+<script type="module">
+import { createElement as h, useState }
+  from "react";
+import { createRoot } from "react-dom/client";
+import { PACIENTES } from "./pacientes.js";
+import { medir } from "./medidor.js";
+
+// a tela é uma função do estado
+function Ala() {
+  const [busca, setBusca] = useState("");
+  const [pacientes, setPacientes] =
+    useState(PACIENTES);
+
+  const t = busca.toLowerCase();
+  const vis = pacientes.filter((p) =>
+    p.nome.toLowerCase().includes(t));
+  const alto = pacientes
+    .filter((p) => p.risco === "alto").length;
+  const alta = (id) => setPacientes(
+    pacientes.filter((p) => p.id !== id));
+
+  return h("div", null,
+    h("input", {
+      placeholder: "buscar", value: busca,
+      onChange: (e) =>
+        setBusca(e.target.value),
+    }),
+    h("p", null,
+      `${pacientes.length} pacientes`
+      + ` · alto risco: ${alto}`),
+    h("ul", null, vis.map((p) =>
+      h("li", { key: p.id },
+        h("b", null, p.nome), ` ${p.leito} `,
+        h("input",
+          { placeholder: "anotação" }),
+        h("button",
+          { onClick: () => alta(p.id) },
+          "Alta")))));
+}
+
+const $ = (s) => document.querySelector(s);
+const app = $("#app");
+const painel = $("#medidor");
+createRoot(app).render(h(Ala));
+medir(app, painel);
+</script>
+</html>

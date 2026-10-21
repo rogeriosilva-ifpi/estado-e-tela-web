@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<title>Ala B · imperativo</title>
+<link rel="stylesheet" href="estilo.css">
+<header>
+  <h1>Ala B</h1>
+  <span class="medidor" id="medidor"></span>
+</header>
+<main id="app">
+  <input id="busca" placeholder="buscar">
+  <p><b id="total"></b> pacientes
+    · alto risco: <b id="alto"></b></p>
+  <ul id="lista"></ul>
+</main>
+
+<script type="module">
+import { PACIENTES } from "./pacientes.js";
+import { medir } from "./medidor.js";
+
+const $ = (s) => document.querySelector(s);
+const lista = $("#lista");
+const total = $("#total");
+const alto = $("#alto");
+const busca = $("#busca");
+let pacientes = [...PACIENTES];
+
+function linha(p) {
+  const li = document.createElement("li");
+  li.dataset.id = p.id;
+  li.innerHTML = `<b>${p.nome}</b> ${p.leito}
+    <input placeholder="anotação">
+    <button>Alta</button>`;
+  return li;
+}
+
+// montagem: três pontos da tela, à mão
+for (const p of pacientes) {
+  lista.append(linha(p));
+}
+total.textContent = pacientes.length;
+alto.textContent = pacientes
+  .filter((p) => p.risco === "alto").length;
+medir($("#app"), $("#medidor"));
+
+// busca: esconde as linhas que não batem
+busca.addEventListener("input", (e) => {
+  const t = e.target.value.toLowerCase();
+  for (const li of lista.children) {
+    const p = pacientes
+      .find((x) => x.id === li.dataset.id);
+    li.hidden = !p.nome.toLowerCase()
+      .includes(t);
+  }
+});
+
+// alta: tira a linha e corrige o total
+lista.addEventListener("click", (e) => {
+  if (e.target.tagName !== "BUTTON") return;
+  const li = e.target.closest("li");
+  pacientes = pacientes
+    .filter((p) => p.id !== li.dataset.id);
+  li.remove();
+  total.textContent = pacientes.length;
+});
+</script>
+</html>
