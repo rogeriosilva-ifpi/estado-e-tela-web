@@ -1,3 +1,9 @@
+import { Painel }
+  from "./compartilhado/Painel.tsx";
+import { FormLogin }
+  from "./features/acesso/FormLogin.tsx";
+import { FormAdmissao }
+  from "./features/admissao/FormAdmissao.tsx";
 import { Ala }
   from "./features/pacientes/Ala.tsx";
 import { StatusApi } from "./StatusApi.tsx";
@@ -9,6 +15,12 @@ export default function App() {
         <h1>Mini-Prontuário · Ala B</h1>
         <StatusApi />
       </header>
+      <Painel titulo="Entrar">
+        <FormLogin />
+      </Painel>
+      <Painel titulo="Admissão">
+        <FormAdmissao />
+      </Painel>
       <Ala />
     </main>
   );
