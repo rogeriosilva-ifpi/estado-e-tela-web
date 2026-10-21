@@ -26,6 +26,13 @@ npm run gate       # tipos, lint e build
 |---|---|
 | `cap01` | `laboratorio/cap01`: a Ala B em três versões, sem build |
 | `cap02` | projeto Vite com proxy para a API, `AGENTS.md`, `INVARIANTES.md` |
-| `cap03` | lista de pacientes, `renderometro` e o erro da key por índice |
+| `cap03-antes` | lista com key por índice (o teste falha de propósito) |
+| `cap03` | key do domínio, `Renderometro`, Vitest e Testing Library |
 
 Todos os pacientes são fictícios.
+
+## Prompts
+
+`prompts/capNN.md` traz, para cada capítulo, o prompt de agente do livro,
+a variante C-P-T-R-F-A, a revisão adversarial e o V.E.R.M. Leia na branch
+principal: as tags guardam o código de cada capítulo.
