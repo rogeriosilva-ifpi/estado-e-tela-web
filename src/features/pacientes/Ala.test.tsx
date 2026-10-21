@@ -60,3 +60,33 @@ test("busca vazia avisa", async () => {
     "Nenhum paciente encontrado.",
   )).toBeTruthy();
 });
+
+const detalhe = () => within(
+  screen.getByRole("heading",
+    { name: "Detalhe" }).parentElement!);
+const cartao = (nome: string) =>
+  within(nota(nome).closest("li")!);
+
+test("selecionar mostra o detalhe",
+  async () => {
+    render(<Ala />);
+    const joao = cartao("João Lima");
+    await userEvent.click(joao.getByRole(
+      "button", { name: "João Lima" }));
+    expect(detalhe().getByText("102"))
+      .toBeTruthy();
+  });
+
+test("prioridade no cartão e no detalhe",
+  async () => {
+    render(<Ala />);
+    const joao = cartao("João Lima");
+    await userEvent.click(joao.getByRole(
+      "button", { name: "João Lima" }));
+    await userEvent.click(joao.getByRole(
+      "button", { name: "Prioridade" }));
+    expect(joao.getByLabelText("prioridade"))
+      .toBeTruthy();
+    expect(detalhe().getByText("sim"))
+      .toBeTruthy();
+  });

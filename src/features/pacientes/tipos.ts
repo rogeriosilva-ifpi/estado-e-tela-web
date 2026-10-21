@@ -6,4 +6,5 @@ export interface Paciente {
   nome: string;
   leito: string;
   risco: Risco;
+  prioridade: boolean;
 }
