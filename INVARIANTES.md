@@ -11,3 +11,5 @@ capítulo do livro acrescenta as suas; cada regra diz como é verificada.
 | UI-03 | Estado nunca é alterado no lugar: atualização cria objeto ou array novo. | `Ala.test.tsx`: "prioridade no cartão e no detalhe" |
 | UI-04 | Ação que cria registro trava no clique (ref, sem esperar render) e o servidor recusa duplicata (409). `disabled` é aviso visual, não trava. | `FormAdmissao.test.tsx` e `medicoes/cap06.py` |
 | UI-05 | A tela valida para ajudar; o servidor valida para decidir. Erro do servidor aparece no campo. | `FormAdmissao.test.tsx`: "mostra o que o servidor recusou" |
+| UI-06 | Efeito só sincroniza com sistema externo; nunca copia um estado para outro. | `oxlint`: `react/set-state-in-effect` como erro |
+| UI-07 | Efeito que busca dados cancela o pedido na limpeza (AbortController). | `BuscaProntuario.test.tsx`: "resposta velha não sobrescreve a nova" |
