@@ -28,6 +28,10 @@ npm run gate       # tipos, lint e build
 | `cap02` | projeto Vite com proxy para a API, `AGENTS.md`, `INVARIANTES.md` |
 | `cap03-antes` | lista com key por índice (o teste falha de propósito) |
 | `cap03` | key do domínio, `Renderometro`, Vitest e Testing Library |
+| `cap04-antes` | componente definido dentro de outro (as anotações somem) |
+| `cap04` | composição: peças de domínio, `Painel` com children, `docs/UI.md` |
+| `cap05-antes` | prioridade mutando o objeto (a tela não muda) |
+| `cap05` | seleção com estado levantado, detalhe e atualização imutável |
 
 Todos os pacientes são fictícios.
 

@@ -30,10 +30,10 @@ export function Ala() {
   }
 
   function alternarPrioridade(id: string) {
-    const p = pacientes
-      .find((x) => x.id === id)!;
-    p.prioridade = !p.prioridade;
-    setPacientes(pacientes);
+    setPacientes(pacientes.map((p) =>
+      p.id === id
+        ? { ...p, prioridade: !p.prioridade }
+        : p));
   }
 
   return (
