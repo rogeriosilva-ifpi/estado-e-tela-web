@@ -14,6 +14,10 @@ type Campo = HTMLInputElement;
 const nota = (nome: string) =>
   screen.getByLabelText(
     `Anotação de ${nome}`) as Campo;
+const buscar = (texto: string) =>
+  userEvent.type(
+    screen.getByLabelText("Buscar paciente"),
+    texto);
 
 async function darAlta(nome: string) {
   const li = nota(nome).closest("li")!;
@@ -37,4 +41,22 @@ test("alto risco cai na alta", async () => {
   await darAlta("Maria Souza");
   expect(screen.getByText(/alto risco: 1/))
     .toBeTruthy();
+});
+
+test("anotação sobrevive à busca",
+  async () => {
+    render(<Ala />);
+    await userEvent.type(
+      nota("João Lima"), "ver febre");
+    await buscar("o");
+    expect(nota("João Lima").value)
+      .toBe("ver febre");
+  });
+
+test("busca vazia avisa", async () => {
+  render(<Ala />);
+  await buscar("xyz");
+  expect(screen.getByText(
+    "Nenhum paciente encontrado.",
+  )).toBeTruthy();
 });
