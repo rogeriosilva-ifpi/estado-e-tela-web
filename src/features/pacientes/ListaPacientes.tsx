@@ -14,8 +14,8 @@ export function ListaPacientes(
 ) {
   return (
     <ul>
-      {pacientes.map((p, i) => (
-        <Renderometro key={i} id={p.nome}>
+      {pacientes.map((p) => (
+        <Renderometro key={p.id} id={p.nome}>
           <CartaoPaciente
             paciente={p}
             onAlta={onAlta}
