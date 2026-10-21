@@ -1,5 +1,5 @@
 import {
-  cleanup, render, screen,
+  act, cleanup, render, screen, waitFor,
 } from "@testing-library/react";
 import userEvent
   from "@testing-library/user-event";
@@ -53,6 +53,26 @@ test("não envia duas vezes", async () => {
     { status: 201 }));
 });
 
+test("dois cliques no mesmo instante",
+  async () => {
+    let responder = (_r: Response) => {};
+    const f = vi.fn(() =>
+      new Promise<Response>((ok) => {
+        responder = ok; }));
+    vi.stubGlobal("fetch", f);
+    render(<FormAdmissao />);
+    await preencher();
+    const b = screen.getByRole("button",
+      { name: "Admitir" });
+    // sem esperar o React redesenhar
+    act(() => { b.click(); b.click(); });
+    await waitFor(() =>
+      expect(f).toHaveBeenCalled());
+    expect(f).toHaveBeenCalledTimes(1);
+  responder(Response.json({ id: "p101" },
+    { status: 201 }));
+});
+
 test("mostra o que o servidor recusou",
   async () => {
     const corpo = { error: "Dados inválidos.",
@@ -63,10 +83,24 @@ test("mostra o que o servidor recusou",
     await preencher();
     await admitir();
     expect(await screen.findByText(
-      "Recusado pelo servidor."),
-    ).toBeTruthy();
+      "Recusado pelo servidor.", {},
+      { timeout: 3000 })).toBeTruthy();
     expect(
       (screen.getByLabelText("Nome") as
         HTMLInputElement).value,
     ).toBe("Rosa Amaral");
   });
+
+test("CNS repetido no servidor", async () => {
+  const msg =
+    "Já existe paciente com este CNS.";
+  const corpo = { error: msg };
+  vi.stubGlobal("fetch", vi.fn(async () =>
+    Response.json(corpo, { status: 409 })));
+  render(<FormAdmissao />);
+  await preencher();
+  await admitir();
+  const alerta = await screen.findByRole(
+    "alert", {}, { timeout: 3000 });
+  expect(alerta.textContent).toBe(msg);
+});

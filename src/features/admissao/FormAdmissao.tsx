@@ -1,21 +1,33 @@
-import { useState } from "react";
+import {
+  useActionState, useRef,
+} from "react";
 import type { FormEvent } from "react";
 import { Campo }
   from "../../compartilhado/Campo.tsx";
 import { admitir, type Resultado }
   from "./admitir.ts";
 
-export function FormAdmissao() {
-  const [res, setRes] =
-    useState<Resultado>({ tipo: "ocioso" });
+const INICIAL: Resultado = { tipo: "ocioso" };
 
+export function FormAdmissao() {
+  const emCurso = useRef(false);
   async function enviar(
-    e: FormEvent<HTMLFormElement>,
+    ant: Resultado, dados: FormData,
   ) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    setRes(await admitir(res,
-      new FormData(form)));
+    try {
+      return await admitir(ant, dados);
+    } finally {
+      emCurso.current = false;
+    }
+  }
+  const [res, acao, pendente] =
+    useActionState(enviar, INICIAL);
+
+  // Roda antes da action, no mesmo instante
+  // do clique: o ref não espera um render.
+  function travar(e: FormEvent) {
+    if (emCurso.current) e.preventDefault();
+    else emCurso.current = true;
   }
 
   const v = "valores" in res
@@ -25,7 +37,8 @@ export function FormAdmissao() {
       : undefined;
 
   return (
-    <form onSubmit={enviar} noValidate>
+    <form action={acao} onSubmit={travar}
+      noValidate>
       <Campo nome="nome" rotulo="Nome"
         valor={v.nome} erro={erro("nome")} />
       <Campo nome="cns" rotulo="CNS"
@@ -34,7 +47,9 @@ export function FormAdmissao() {
         rotulo="Nascimento"
         valor={v.nascimento}
         erro={erro("nascimento")} />
-      <button>Admitir</button>
+      <button disabled={pendente}>
+        {pendente ? "Enviando…" : "Admitir"}
+      </button>
       {res.tipo === "erro" && (
         <p role="alert">{res.msg}</p>
       )}

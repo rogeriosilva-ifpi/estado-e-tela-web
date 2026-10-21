@@ -46,6 +46,11 @@ export async function admitir(
     return { tipo: "invalido", erros,
       valores };
   }
+  if (r.status === 409) {
+    const { error } = await r.json();
+    return { tipo: "erro", msg: error,
+      valores };
+  }
   if (!r.ok) {
     const msg = MSG[r.status]
       ?? "Falha no servidor. Tente de novo.";
