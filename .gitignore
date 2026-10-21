@@ -1,6 +1,9 @@
 node_modules/
 dist/
+*.local
+*.log
 .env*
 !.env.exemplo
 test-results/
 playwright-report/
+.DS_Store
