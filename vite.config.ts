@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -12,4 +13,5 @@ export default defineConfig({
       "/health": "http://localhost:3000",
     },
   },
+  test: { environment: "jsdom" },
 });
