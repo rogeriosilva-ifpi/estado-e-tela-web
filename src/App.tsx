@@ -6,6 +6,8 @@ import { FormAdmissao }
   from "./features/admissao/FormAdmissao.tsx";
 import { Ala }
   from "./features/pacientes/Ala.tsx";
+import { BuscaProntuario } from
+  "./features/prontuario/BuscaProntuario.tsx";
 import { StatusApi } from "./StatusApi.tsx";
 
 export default function App() {
@@ -20,6 +22,9 @@ export default function App() {
       </Painel>
       <Painel titulo="Admissão">
         <FormAdmissao />
+      </Painel>
+      <Painel titulo="Busca no prontuário">
+        <BuscaProntuario />
       </Painel>
       <Ala />
     </main>
