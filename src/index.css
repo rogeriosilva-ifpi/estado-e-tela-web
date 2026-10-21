@@ -6,3 +6,8 @@
 body { margin: 0; }
 main { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
 button, input, select, textarea { font: inherit; }
+.painel { border: 1px solid #ccc; border-radius: 8px;
+  padding: 4px 16px 12px; margin-bottom: 16px; }
+.selo { font-size: 12px; padding: 1px 6px;
+  border-radius: 4px; background: #eee; }
+.selo[data-risco="alto"] { background: #fbe3df; }

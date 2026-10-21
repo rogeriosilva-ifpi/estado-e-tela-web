@@ -1,0 +1,26 @@
+import { SeloRisco } from "./SeloRisco.tsx";
+import type { Paciente } from "./tipos.ts";
+
+interface Props {
+  paciente: Paciente;
+  onAlta: (id: string) => void;
+}
+
+export function CartaoPaciente(
+  { paciente, onAlta }: Props,
+) {
+  const { id, nome, leito, risco } = paciente;
+  return (
+    <li>
+      <b>{nome}</b> {leito}
+      <SeloRisco risco={risco} />
+      <input
+        aria-label={`Anotação de ${nome}`}
+        placeholder="anotação"
+      />
+      <button onClick={() => onAlta(id)}>
+        Alta
+      </button>
+    </li>
+  );
+}
