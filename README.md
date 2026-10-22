@@ -10,7 +10,7 @@ Primeiro a API, num terminal:
 ```bash
 git clone https://github.com/rogeriosilva-ifpi/estado-e-tela-api
 cd estado-e-tela-api && npm install
-git checkout cap07 && npm start      # :3000, ou a tag do capítulo
+git checkout cap07 && npm start      # :3000 (cap07 serve até o cap. 10)
 ```
 
 Depois a tela, em outro:
@@ -18,7 +18,7 @@ Depois a tela, em outro:
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm run gate       # tipos, lint e build
+npm run gate       # tipos, lint, fronteiras, testes e build
 ```
 
 ## Mapa das tags
@@ -37,6 +37,13 @@ npm run gate       # tipos, lint e build
 | `cap06` | `useActionState` e trava com `useRef`; 409 no formulário (API `cap06`) |
 | `cap07-antes` | busca no prontuário com efeito sem limpeza (resposta velha vence) |
 | `cap07` | `useBuscaPacientes` com `AbortController`; total derivado (API `cap07`) |
+| `cap08-antes` | prontuário importa `BarraBusca` da Ala; busca sem login derruba a tela |
+| `cap08` | `app/`, `api/cliente.ts` (`ErroHttp`), `LimiteDeErro` por painel, dependency-cruiser no portão |
+| `cap09-antes` | "visual de produto" em CSS global: contraste, foco e tema escuro quebrados |
+| `cap09` | tokens com `light-dark()`, contraste testado, `base.css` e CSS Modules |
+| `cap09-tailwind` | a mesma tela em Tailwind 4.3, para comparar (fora da linha principal) |
+| `cap10-antes` | confirmação de alta numa `div` sobreposta |
+| `cap10` | catálogo: `Botao`, `Aviso`, `Modal` com `<dialog>`; lint proíbe `<button>` cru |
 
 Todos os pacientes são fictícios.
 
