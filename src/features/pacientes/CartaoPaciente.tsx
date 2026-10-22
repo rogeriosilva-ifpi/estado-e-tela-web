@@ -1,4 +1,6 @@
 import css from "./CartaoPaciente.module.css";
+import { Botao }
+  from "../../compartilhado/Botao.tsx";
 import { SeloRisco } from "./SeloRisco.tsx";
 import type { Paciente } from "./tipos.ts";
 
@@ -19,10 +21,10 @@ export function CartaoPaciente({
   return (
     <li className={css.cartao}
       aria-current={atual}>
-      <button className={css.nome}
+      <Botao variante="texto"
         onClick={() => onSelecionar(id)}>
         {nome}
-      </button>{" "}
+      </Botao>
       <span className={css.leito}>
         leito {leito}</span>
       <SeloRisco risco={risco} />
@@ -33,15 +35,15 @@ export function CartaoPaciente({
         aria-label={`Anotação de ${nome}`}
         placeholder="anotação"
       />
-      <button
+      <Botao variante="secundaria"
         aria-pressed={paciente.prioridade}
-        onClick={() => onPrioridade(id)}
-      >
+        onClick={() => onPrioridade(id)}>
         Prioridade
-      </button>
-      <button onClick={() => onAlta(id)}>
+      </Botao>
+      <Botao variante="secundaria"
+        onClick={() => onAlta(id)}>
         Alta
-      </button>
+      </Botao>
     </li>
   );
 }

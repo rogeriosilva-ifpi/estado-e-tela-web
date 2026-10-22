@@ -70,14 +70,13 @@ export function Ala() {
         <PainelDetalhe
           paciente={selecionado} />
       </Painel>
-      {saindo && (
-        <ConfirmaAlta
-          nome={saindo.nome}
-          onConfirmar={() => darAlta(saindo.id)}
-          onCancelar={() =>
-            setAConfirmar(undefined)}
-        />
-      )}
+      <ConfirmaAlta
+        nome={saindo?.nome}
+        onConfirmar={() =>
+          saindo && darAlta(saindo.id)}
+        onCancelar={() =>
+          setAConfirmar(undefined)}
+      />
     </>
   );
 }

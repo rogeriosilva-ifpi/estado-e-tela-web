@@ -2,6 +2,10 @@ import {
   useActionState, useRef,
 } from "react";
 import type { FormEvent } from "react";
+import { Aviso }
+  from "../../compartilhado/Aviso.tsx";
+import { Botao }
+  from "../../compartilhado/Botao.tsx";
 import { Campo }
   from "../../compartilhado/Campo.tsx";
 import { admitir, type Resultado }
@@ -47,16 +51,17 @@ export function FormAdmissao() {
         rotulo="Nascimento"
         valor={v.nascimento}
         erro={erro("nascimento")} />
-      <button disabled={pendente}>
+      <Botao type="submit"
+        disabled={pendente}>
         {pendente ? "Enviando…" : "Admitir"}
-      </button>
+      </Botao>
       {res.tipo === "erro" && (
-        <p role="alert">{res.msg}</p>
+        <Aviso tom="erro">{res.msg}</Aviso>
       )}
       {res.tipo === "ok" && (
-        <p role="status">
+        <Aviso tom="info">
           Paciente {res.id} admitido.
-        </p>
+        </Aviso>
       )}
     </form>
   );

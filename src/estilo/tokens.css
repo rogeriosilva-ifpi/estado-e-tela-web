@@ -12,6 +12,11 @@
   --acao: light-dark(#1d4ed8, #8fb4ff);
   --acao-texto: light-dark(#ffffff, #0f141a);
   --foco: light-dark(#b45309, #fbbf24);
+  --perigo: light-dark(#b91c1c, #ffb4ab);
+  --perigo-texto:
+    light-dark(#ffffff, #3b0d0a);
+  --veu: light-dark(rgb(15 20 26 / 0.45),
+    rgb(0 0 0 / 0.6));
 
   --alto-fundo: light-dark(#fde2e1, #4a1d1b);
   --alto-texto: light-dark(#9b1c17, #ffb4ab);

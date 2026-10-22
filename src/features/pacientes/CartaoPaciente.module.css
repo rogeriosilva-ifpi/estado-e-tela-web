@@ -10,12 +10,6 @@
   box-shadow: inset 4px 0 var(--acao);
   padding-left: var(--espaco-3);
 }
-.nome {
-  padding: 0;
-  background: none;
-  color: var(--texto);
-  font-weight: 600;
-}
 .leito {
   font-size: var(--texto-pequeno);
   color: var(--texto-fraco);

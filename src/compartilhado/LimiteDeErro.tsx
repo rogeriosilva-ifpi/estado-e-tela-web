@@ -1,6 +1,7 @@
 import { Component } from "react";
 import type { ErrorInfo, ReactNode }
   from "react";
+import { Botao } from "./Botao.tsx";
 
 interface Props {
   area: string;
@@ -34,10 +35,11 @@ export class LimiteDeErro
     return (
       <div role="alert">
         <p>{this.props.area}: algo falhou.</p>
-        <button onClick={() =>
-          this.setState({ falhou: false })}>
+        <Botao variante="secundaria"
+          onClick={() =>
+            this.setState({ falhou: false })}>
           Tentar de novo
-        </button>
+        </Botao>
       </div>
     );
   }

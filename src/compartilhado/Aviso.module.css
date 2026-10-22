@@ -1,0 +1,7 @@
+.aviso[data-tom="info"] {
+  color: var(--texto-fraco);
+}
+.aviso[data-tom="erro"] {
+  color: var(--perigo);
+  font-weight: 600;
+}

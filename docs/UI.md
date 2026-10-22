@@ -35,6 +35,22 @@ src/
   em `tokens.test.ts`.
 - Nunca `outline: none` sem substituto. A cor reforça; o texto informa.
 
+## Catálogo (`src/compartilhado/`)
+
+Antes de criar um componente, procure aqui. Peça nova entra no
+catálogo só no terceiro uso real.
+
+| Peça | Para quê | Regras |
+|---|---|---|
+| `Botao` | toda ação clicável | `variante`: `primaria` (uma por área), `secundaria`, `perigo` (ação sem volta), `texto` (nome clicável). `type="submit"` só em formulário. |
+| `Campo` | rótulo + entrada + erro | erro ligado por `aria-describedby` |
+| `Aviso` | mensagem ao usuário | `tom="erro"` interrompe o leitor de tela; `tom="info"` espera |
+| `Modal` | caixa sobre a tela | controlado por `aberto`; `onFechar` também vem do Esc; Cancelar primeiro |
+| `Painel` | moldura com título | já contém `LimiteDeErro` |
+| `BarraBusca` | campo de busca | `rotulo` sempre explícito |
+
+`<button>` e `<dialog>` crus são erro de lint fora do catálogo.
+
 ## Componentes
 
 - Um componente por arquivo, nome em PascalCase igual ao do arquivo.

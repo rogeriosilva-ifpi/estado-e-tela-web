@@ -1,5 +1,5 @@
 /* Elementos nativos, uma vez, só com
-   tokens. Componente usa CSS Module. */
+   tokens. Botão é o componente Botao. */
 body {
   margin: 0;
   background: var(--fundo);
@@ -12,6 +12,7 @@ main {
   padding: var(--espaco-4);
 }
 button, input { font: inherit; }
+input { font: inherit; }
 button {
   min-height: 32px;
   padding: 0 var(--espaco-3);

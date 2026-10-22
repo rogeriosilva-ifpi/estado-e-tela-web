@@ -22,6 +22,21 @@
         "name": "fetch",
         "message": "Use pedir() de src/api/cliente.ts (UI-09)."
       }
+    ],
+    "react/forbid-elements": [
+      "error",
+      {
+        "forbid": [
+          {
+            "element": "button",
+            "message": "Use Botao de compartilhado/ (UI-13)."
+          },
+          {
+            "element": "dialog",
+            "message": "Use Modal de compartilhado/ (UI-14)."
+          }
+        ]
+      }
     ]
   },
   "overrides": [
@@ -32,6 +47,15 @@
       ],
       "rules": {
         "no-restricted-globals": "off"
+      }
+    },
+    {
+      "files": [
+        "src/compartilhado/Botao.tsx",
+        "src/compartilhado/Modal.tsx"
+      ],
+      "rules": {
+        "react/forbid-elements": "off"
       }
     }
   ]

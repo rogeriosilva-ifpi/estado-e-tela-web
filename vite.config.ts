@@ -13,5 +13,8 @@ export default defineConfig({
       "/health": "http://localhost:3000",
     },
   },
-  test: { environment: "jsdom" },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["src/teste/dialogo.ts"],
+  },
 });

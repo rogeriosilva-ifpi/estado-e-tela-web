@@ -2,6 +2,10 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { ErroHttp, pedir }
   from "../../api/cliente.ts";
+import { Aviso }
+  from "../../compartilhado/Aviso.tsx";
+import { Botao }
+  from "../../compartilhado/Botao.tsx";
 
 type Estado =
   | { tipo: "ocioso" }
@@ -55,12 +59,12 @@ export function FormLogin() {
           onChange={(e) =>
             setSenha(e.target.value)} />
       </label>
-      <button
+      <Botao type="submit"
         disabled={estado.tipo === "enviando"}>
         Entrar
-      </button>
+      </Botao>
       {estado.tipo === "erro" && (
-        <p role="alert">{estado.msg}</p>
+        <Aviso tom="erro">{estado.msg}</Aviso>
       )}
     </form>
   );

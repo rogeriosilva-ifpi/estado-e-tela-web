@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Aviso }
+  from "../../compartilhado/Aviso.tsx";
 import { BarraBusca }
   from "../../compartilhado/BarraBusca.tsx";
 import { useBuscaPacientes }
@@ -21,7 +23,7 @@ export function BuscaProntuario() {
         onMudar={setTermo}
       />
       {aviso ? (
-        <p role="status">{aviso}</p>
+        <Aviso tom="info">{aviso}</Aviso>
       ) : (
         <p>{total} encontrado(s) para
           “{termo}”</p>

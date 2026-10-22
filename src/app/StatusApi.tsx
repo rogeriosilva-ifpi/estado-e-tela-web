@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { pedir } from "../api/cliente.ts";
+import { Botao }
+  from "../compartilhado/Botao.tsx";
 
 type Status = "ocioso" | "ok" | "fora do ar";
 
@@ -21,9 +23,10 @@ export function StatusApi() {
   return (
     <p>
       API: <strong>{status}</strong>{" "}
-      <button onClick={verificar}>
+      <Botao variante="secundaria"
+        onClick={verificar}>
         Verificar API
-      </button>
+      </Botao>
     </p>
   );
 }

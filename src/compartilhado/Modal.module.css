@@ -1,0 +1,15 @@
+.modal {
+  max-width: min(90vw, 360px);
+  padding: var(--espaco-4);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--texto);
+}
+.modal::backdrop {
+  background: var(--veu);
+}
+.modal h2 {
+  margin-top: 0;
+  font-size: 1.125rem;
+}

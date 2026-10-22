@@ -10,7 +10,7 @@ const css = readFileSync(
 // --nome: light-dark(#claro, #escuro)
 const cor = new Map<string, string[]>();
 const hex = "(#[0-9a-f]{6})";
-const re = new RegExp("--([\\w-]+): "
+const re = new RegExp("--([\\w-]+):\\s+"
   + `light-dark\\(${hex}, ${hex}\\)`, "g");
 for (const [, nome, claro, escuro]
   of css.matchAll(re)) {
@@ -46,6 +46,8 @@ const PARES: [string, string, number][] = [
   ["alto-texto", "alto-fundo", 4.5],
   ["medio-texto", "medio-fundo", 4.5],
   ["baixo-texto", "baixo-fundo", 4.5],
+  ["perigo-texto", "perigo", 4.5],
+  ["perigo", "superficie", 4.5],
   ["foco", "superficie", 3],
   ["foco", "fundo", 3],
 ];
