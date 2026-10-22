@@ -19,11 +19,16 @@ const buscar = (texto: string) =>
     screen.getByLabelText("Buscar paciente"),
     texto);
 
-async function darAlta(nome: string) {
+async function pedirAlta(nome: string) {
   const li = nota(nome).closest("li")!;
   await userEvent.click(
     within(li).getByRole("button",
       { name: "Alta" }));
+}
+async function darAlta(nome: string) {
+  await pedirAlta(nome);
+  await userEvent.click(screen.getByRole(
+    "button", { name: "Confirmar alta" }));
 }
 
 test("anotação acompanha o paciente",
@@ -89,4 +94,16 @@ test("prioridade no cartão e no detalhe",
       .toBeTruthy();
     expect(detalhe().getByText("sim"))
       .toBeTruthy();
+  });
+
+test("alta pede confirmação num diálogo",
+  async () => {
+    render(<Ala />);
+    await pedirAlta("Maria Souza");
+    const dialogo = screen.getByRole("dialog",
+      { name: "Dar alta a Maria Souza?" });
+    await userEvent.click(within(dialogo)
+      .getByRole("button",
+        { name: "Cancelar" }));
+    expect(nota("Maria Souza")).toBeTruthy();
   });

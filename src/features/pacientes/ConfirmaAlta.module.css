@@ -1,0 +1,14 @@
+.fundo {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb,
+    var(--fundo) 70%, transparent);
+}
+.caixa {
+  padding: var(--espaco-4);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie);
+}

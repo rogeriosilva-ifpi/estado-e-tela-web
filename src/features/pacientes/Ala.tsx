@@ -3,6 +3,8 @@ import { Painel }
   from "../../compartilhado/Painel.tsx";
 import { BarraBusca } from
   "../../compartilhado/BarraBusca.tsx";
+import { ConfirmaAlta }
+  from "./ConfirmaAlta.tsx";
 import { ALA_B } from "./dados.ts";
 import { ListaPacientes }
   from "./ListaPacientes.tsx";
@@ -18,16 +20,21 @@ export function Ala() {
     useState(ALA_B);
   const [selecionadoId, setSelecionadoId] =
     useState<string>();
+  const [aConfirmar, setAConfirmar] =
+    useState<string>();
 
   const t = busca.toLowerCase();
   const visiveis = pacientes.filter((p) =>
     p.nome.toLowerCase().includes(t));
   const selecionado = pacientes
     .find((p) => p.id === selecionadoId);
+  const saindo = pacientes
+    .find((p) => p.id === aConfirmar);
 
   function darAlta(id: string) {
     setPacientes(
       pacientes.filter((p) => p.id !== id));
+    setAConfirmar(undefined);
   }
 
   function alternarPrioridade(id: string) {
@@ -55,7 +62,7 @@ export function Ala() {
             selecionadoId={selecionadoId}
             onSelecionar={setSelecionadoId}
             onPrioridade={alternarPrioridade}
-            onAlta={darAlta}
+            onAlta={setAConfirmar}
           />
         )}
       </Painel>
@@ -63,6 +70,14 @@ export function Ala() {
         <PainelDetalhe
           paciente={selecionado} />
       </Painel>
+      {saindo && (
+        <ConfirmaAlta
+          nome={saindo.nome}
+          onConfirmar={() => darAlta(saindo.id)}
+          onCancelar={() =>
+            setAConfirmar(undefined)}
+        />
+      )}
     </>
   );
 }
