@@ -21,7 +21,8 @@ export function CartaoPaciente({
         onClick={() => onSelecionar(id)}>
         {nome}
       </button>{" "}
-      {leito} <SeloRisco risco={risco} />
+      <span className="leito">{leito}</span>
+      <SeloRisco risco={risco} />
       {paciente.prioridade && (
         <span aria-label="prioridade">★</span>
       )}
