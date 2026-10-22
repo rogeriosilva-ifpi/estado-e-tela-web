@@ -6,8 +6,10 @@ laboratório do ebook *Estado & Tela*.
 ## Comandos
 
 - `npm run dev`: tela em localhost:5173
-- `npm run gate`: tipos, lint e build;
-  precisa passar antes de toda entrega
+- `npm run gate`: tipos, lint, fronteiras,
+  testes e build; precisa passar antes
+  de toda entrega
+- `npm run fronteiras`: quem importa quem
 - A API roda à parte (`estado-e-tela-api`,
   `npm start`, porta 3000)
 
@@ -23,7 +25,8 @@ laboratório do ebook *Estado & Tela*.
 
 ## Regras
 
-- Leia `INVARIANTES.md` antes de editar.
+- Leia `INVARIANTES.md` e `docs/UI.md`
+  antes de editar.
   Regra violada é defeito.
 - Dependência nova só com pedido: diga
   o motivo e a alternativa.

@@ -1,13 +1,13 @@
 import { Painel }
-  from "./compartilhado/Painel.tsx";
+  from "../compartilhado/Painel.tsx";
 import { FormLogin }
-  from "./features/acesso/FormLogin.tsx";
-import { FormAdmissao }
-  from "./features/admissao/FormAdmissao.tsx";
+  from "../features/acesso/FormLogin.tsx";
+import { FormAdmissao } from
+  "../features/admissao/FormAdmissao.tsx";
 import { Ala }
-  from "./features/pacientes/Ala.tsx";
+  from "../features/pacientes/Ala.tsx";
 import { BuscaProntuario } from
-  "./features/prontuario/BuscaProntuario.tsx";
+  "../features/prontuario/BuscaProntuario.tsx";
 import { StatusApi } from "./StatusApi.tsx";
 
 export default function App() {

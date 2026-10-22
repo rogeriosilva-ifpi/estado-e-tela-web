@@ -2,6 +2,29 @@
 
 O agente lê este arquivo antes de criar ou mudar uma tela.
 
+## Onde cada coisa mora
+
+```
+src/
+  main.tsx        só monta o App
+  app/            composição da tela inteira
+  api/            cliente.ts: a única porta para a rede
+  compartilhado/  peças sem domínio (Painel, Campo, ...)
+  features/
+    acesso/       login
+    admissao/     formulário e action
+    pacientes/    a Ala
+    prontuario/   busca no servidor
+  lab/            instrumentos do livro, fora do produto
+```
+
+- Uma pasta por funcionalidade, com tudo dela dentro: componentes,
+  hooks, tipos, testes.
+- Uma feature não importa outra. Se duas precisam da mesma peça, ela
+  sobe para `compartilhado/` sem nada de domínio.
+- Quem fala com a API é `api/cliente.ts`. A feature chama `pedir()` e
+  trata `ErroHttp` pelo status.
+
 ## Componentes
 
 - Um componente por arquivo, nome em PascalCase igual ao do arquivo.

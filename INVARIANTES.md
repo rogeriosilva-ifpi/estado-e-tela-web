@@ -13,3 +13,6 @@ capítulo do livro acrescenta as suas; cada regra diz como é verificada.
 | UI-05 | A tela valida para ajudar; o servidor valida para decidir. Erro do servidor aparece no campo. | `FormAdmissao.test.tsx`: "mostra o que o servidor recusou" |
 | UI-06 | Efeito só sincroniza com sistema externo; nunca copia um estado para outro. | `oxlint`: `react/set-state-in-effect` como erro |
 | UI-07 | Efeito que busca dados cancela o pedido na limpeza (AbortController). | `BuscaProntuario.test.tsx`: "resposta velha não sobrescreve a nova" |
+| UI-08 | Feature não importa outra feature; `api/` e `compartilhado/` não importam `features/` nem `app/`; nenhum ciclo. O que duas features usam sobe para `compartilhado/`. | `npm run fronteiras` (dependency-cruiser) |
+| UI-09 | Só `src/api/` chama `fetch`. Resposta de erro vira `ErroHttp` com o status; nenhuma tela interpreta `Response` cru. | `oxlint`: `no-restricted-globals` |
+| UI-10 | Erro esperado (401, 403, 409) vira aviso no lugar dele. Erro inesperado sobe ao `LimiteDeErro` do painel: o painel avisa e o resto da tela continua. | `LimiteDeErro.test.tsx` e `BuscaProntuario.test.tsx`: "sem login, avisa em vez de quebrar" |

@@ -1,3 +1,5 @@
+import { ErroHttp, pedir }
+  from "../../api/cliente.ts";
 import { NovoPaciente } from "./esquema.ts";
 
 export type Valores = Record<string, string>;
@@ -31,31 +33,29 @@ export async function admitir(
       valores };
   }
 
-  const r = await fetch("/api/patients", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json" },
-    body: JSON.stringify(v.data),
-  });
-  if (r.status === 400) {
-    const { campos } = await r.json();
-    const erros: Valores = {};
-    for (const c of campos as string[]) {
-      erros[c] = "Recusado pelo servidor.";
+  try {
+    type Criado = { id: string };
+    const { id } = await pedir<Criado>(
+      "/api/patients",
+      { metodo: "POST", corpo: v.data });
+    return { tipo: "ok", id };
+  } catch (e) {
+    // rede caída ou defeito: sobe ao limite
+    if (!(e instanceof ErroHttp)) throw e;
+    const corpo = e.corpo as {
+      error?: string; campos?: string[] };
+    if (e.status === 400) {
+      const erros: Valores = {};
+      for (const c of corpo.campos ?? []) {
+        erros[c] = "Recusado pelo servidor.";
+      }
+      return { tipo: "invalido", erros,
+        valores };
     }
-    return { tipo: "invalido", erros,
-      valores };
-  }
-  if (r.status === 409) {
-    const { error } = await r.json();
-    return { tipo: "erro", msg: error,
-      valores };
-  }
-  if (!r.ok) {
-    const msg = MSG[r.status]
+    const doServidor = e.status === 409
+      ? corpo.error : undefined;
+    const msg = doServidor ?? MSG[e.status]
       ?? "Falha no servidor. Tente de novo.";
     return { tipo: "erro", msg, valores };
   }
-  const { id } = await r.json();
-  return { tipo: "ok", id };
 }

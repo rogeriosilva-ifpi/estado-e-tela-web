@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BarraBusca }
-  from "../pacientes/BarraBusca.tsx";
+  from "../../compartilhado/BarraBusca.tsx";
 import { useBuscaPacientes }
   from "./useBuscaPacientes.ts";
 
@@ -8,7 +8,8 @@ import { useBuscaPacientes }
 // servidor, a cada tecla.
 export function BuscaProntuario() {
   const [termo, setTermo] = useState("");
-  const achados = useBuscaPacientes(termo);
+  const { achados, aviso } =
+    useBuscaPacientes(termo);
   const total = achados.length; // derivado
 
   return (
@@ -19,8 +20,12 @@ export function BuscaProntuario() {
         valor={termo}
         onMudar={setTermo}
       />
-      <p>{total} encontrado(s) para
-        “{termo}”</p>
+      {aviso ? (
+        <p role="status">{aviso}</p>
+      ) : (
+        <p>{total} encontrado(s) para
+          “{termo}”</p>
+      )}
       <ul aria-label="Resultados">
         {achados.map((a) => (
           <li key={a.id}>{a.nome}</li>

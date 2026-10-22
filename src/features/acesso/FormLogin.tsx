@@ -1,11 +1,14 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { ErroHttp, pedir }
+  from "../../api/cliente.ts";
 
 type Estado =
   | { tipo: "ocioso" }
   | { tipo: "enviando" }
   | { tipo: "erro"; msg: string }
   | { tipo: "ok"; nome: string };
+type Sessao = { usuario: { nome: string } };
 
 // Formulário controlado: cada tecla passa
 // pelo estado do React.
@@ -20,22 +23,19 @@ export function FormLogin() {
   ) {
     e.preventDefault();
     setEstado({ tipo: "enviando" });
-    const r = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json" },
-      body: JSON.stringify({ email, senha }),
-    });
-    if (!r.ok) {
-      const msg = r.status === 401
+    try {
+      const { usuario } = await pedir<Sessao>(
+        "/api/auth/login", { metodo: "POST",
+          corpo: { email, senha } });
+      setEstado(
+        { tipo: "ok", nome: usuario.nome });
+    } catch (erro) {
+      const negado = erro instanceof ErroHttp
+        && erro.status === 401;
+      setEstado({ tipo: "erro", msg: negado
         ? "E-mail ou senha incorretos."
-        : "Não foi possível entrar agora.";
-      setEstado({ tipo: "erro", msg });
-      return;
+        : "Não foi possível entrar agora." });
     }
-    const { usuario } = await r.json();
-    setEstado(
-      { tipo: "ok", nome: usuario.nome });
   }
 
   if (estado.tipo === "ok") {

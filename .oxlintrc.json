@@ -15,6 +15,24 @@
     ],
     "react/no-unstable-nested-components": "error",
     "react/set-state-in-effect": "error",
-    "react/exhaustive-deps": "error"
-  }
+    "react/exhaustive-deps": "error",
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "fetch",
+        "message": "Use pedir() de src/api/cliente.ts (UI-09)."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/api/**",
+        "**/*.test.tsx"
+      ],
+      "rules": {
+        "no-restricted-globals": "off"
+      }
+    }
+  ]
 }

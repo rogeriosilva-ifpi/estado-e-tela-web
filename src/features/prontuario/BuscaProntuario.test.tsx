@@ -80,8 +80,9 @@ test("sem login, avisa em vez de quebrar",
         { error: "Não autenticado." },
         { status: 401 })));
     render(<BuscaProntuario />);
-    await userEvent.type(screen.getByLabelText(
-      "Buscar no prontuário"), "ma");
+    const campo = screen.getByLabelText(
+      "Buscar no prontuário");
+    await userEvent.type(campo, "ma");
     expect(await screen.findByText(
       "Entre para buscar no prontuário."))
       .toBeTruthy();

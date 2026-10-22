@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Painel }
   from "../../compartilhado/Painel.tsx";
-import { BarraBusca } from "./BarraBusca.tsx";
+import { BarraBusca } from
+  "../../compartilhado/BarraBusca.tsx";
 import { ALA_B } from "./dados.ts";
 import { ListaPacientes }
   from "./ListaPacientes.tsx";
