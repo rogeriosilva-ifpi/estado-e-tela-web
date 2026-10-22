@@ -9,7 +9,8 @@ Primeiro a API, num terminal:
 
 ```bash
 git clone https://github.com/rogeriosilva-ifpi/estado-e-tela-api
-cd estado-e-tela-api && npm install && npm start     # :3000
+cd estado-e-tela-api && npm install
+git checkout cap07 && npm start      # :3000, ou a tag do capítulo
 ```
 
 Depois a tela, em outro:
@@ -32,6 +33,10 @@ npm run gate       # tipos, lint e build
 | `cap04` | composição: peças de domínio, `Painel` com children, `docs/UI.md` |
 | `cap05-antes` | prioridade mutando o objeto (a tela não muda) |
 | `cap05` | seleção com estado levantado, detalhe e atualização imutável |
+| `cap06-antes` | formulários de entrada e admissão; o envio pode sair duas vezes |
+| `cap06` | `useActionState` e trava com `useRef`; 409 no formulário (API `cap06`) |
+| `cap07-antes` | busca no prontuário com efeito sem limpeza (resposta velha vence) |
+| `cap07` | `useBuscaPacientes` com `AbortController`; total derivado (API `cap07`) |
 
 Todos os pacientes são fictícios.
 
