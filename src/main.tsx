@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
+import "./estilo/tokens.css";
+import "./estilo/base.css";
 import App from "./app/App.tsx";
 
 createRoot(document.getElementById("root")!)

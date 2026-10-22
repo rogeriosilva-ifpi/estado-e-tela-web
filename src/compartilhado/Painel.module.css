@@ -1,0 +1,14 @@
+.painel {
+  margin-bottom: var(--espaco-4);
+  padding: var(--espaco-1) var(--espaco-4)
+    var(--espaco-3);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie);
+}
+.titulo {
+  font-size: var(--texto-pequeno);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}

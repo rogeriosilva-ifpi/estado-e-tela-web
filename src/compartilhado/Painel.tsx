@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { LimiteDeErro }
   from "./LimiteDeErro.tsx";
+import css from "./Painel.module.css";
 
 interface Props {
   titulo: string;
@@ -14,8 +15,8 @@ export function Painel(
   { titulo, children }: Props,
 ) {
   return (
-    <section className="painel">
-      <h2>{titulo}</h2>
+    <section className={css.painel}>
+      <h2 className={css.titulo}>{titulo}</h2>
       <LimiteDeErro area={titulo}>
         {children}
       </LimiteDeErro>

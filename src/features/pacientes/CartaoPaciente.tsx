@@ -1,3 +1,4 @@
+import css from "./CartaoPaciente.module.css";
 import { SeloRisco } from "./SeloRisco.tsx";
 import type { Paciente } from "./tipos.ts";
 
@@ -16,12 +17,14 @@ export function CartaoPaciente({
   const { id, nome, leito, risco } = paciente;
   const atual = selecionado || undefined;
   return (
-    <li aria-current={atual}>
-      <button
+    <li className={css.cartao}
+      aria-current={atual}>
+      <button className={css.nome}
         onClick={() => onSelecionar(id)}>
         {nome}
       </button>{" "}
-      <span className="leito">{leito}</span>
+      <span className={css.leito}>
+        leito {leito}</span>
       <SeloRisco risco={risco} />
       {paciente.prioridade && (
         <span aria-label="prioridade">★</span>

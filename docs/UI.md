@@ -25,6 +25,16 @@ src/
 - Quem fala com a API é `api/cliente.ts`. A feature chama `pedir()` e
   trata `ErroHttp` pelo status.
 
+## Estilo
+
+- `src/estilo/tokens.css` define cor, espaço e raio, com
+  `light-dark(claro, escuro)`. `src/estilo/base.css` estiliza os
+  elementos nativos (`button`, `input`, `:focus-visible`) uma vez.
+- Componente com estilo próprio tem `Nome.module.css` ao lado e usa só
+  tokens. Cor nova? Crie o token com os dois temas e acrescente o par
+  em `tokens.test.ts`.
+- Nunca `outline: none` sem substituto. A cor reforça; o texto informa.
+
 ## Componentes
 
 - Um componente por arquivo, nome em PascalCase igual ao do arquivo.

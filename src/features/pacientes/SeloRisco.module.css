@@ -1,0 +1,19 @@
+/* A cor reforça; o texto informa. */
+.selo {
+  padding: 1px var(--espaco-2);
+  border-radius: 999px;
+  font-size: var(--texto-pequeno);
+  font-weight: 600;
+}
+.selo[data-risco="alto"] {
+  background: var(--alto-fundo);
+  color: var(--alto-texto);
+}
+.selo[data-risco="médio"] {
+  background: var(--medio-fundo);
+  color: var(--medio-texto);
+}
+.selo[data-risco="baixo"] {
+  background: var(--baixo-fundo);
+  color: var(--baixo-texto);
+}

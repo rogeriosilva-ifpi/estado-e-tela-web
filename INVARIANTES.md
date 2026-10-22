@@ -16,3 +16,5 @@ capítulo do livro acrescenta as suas; cada regra diz como é verificada.
 | UI-08 | Feature não importa outra feature; `api/` e `compartilhado/` não importam `features/` nem `app/`; nenhum ciclo. O que duas features usam sobe para `compartilhado/`. | `npm run fronteiras` (dependency-cruiser) |
 | UI-09 | Só `src/api/` chama `fetch`. Resposta de erro vira `ErroHttp` com o status; nenhuma tela interpreta `Response` cru. | `oxlint`: `no-restricted-globals` |
 | UI-10 | Erro esperado (401, 403, 409) vira aviso no lugar dele. Erro inesperado sobe ao `LimiteDeErro` do painel: o painel avisa e o resto da tela continua. | `LimiteDeErro.test.tsx` e `BuscaProntuario.test.tsx`: "sem login, avisa em vez de quebrar" |
+| UI-11 | Cor, espaço e raio vêm de token (`var(--...)`); hexadecimal só em `src/estilo/tokens.css`. Todo par de texto dos tokens passa 4,5:1 nos dois temas; o contorno de foco, 3:1. | `tokens.test.ts` |
+| UI-12 | Toda parada de teclado tem foco visível: `outline: none` só com substituto. Informação nunca só por cor: o selo escreve o risco. | `medicoes/vigia_a11y.py` (repositório do livro) |

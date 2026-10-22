@@ -2,6 +2,7 @@ import { Renderometro }
   from "../../lab/Renderometro.tsx";
 import { CartaoPaciente }
   from "./CartaoPaciente.tsx";
+import css from "./ListaPacientes.module.css";
 import type { Paciente } from "./tipos.ts";
 
 interface Props {
@@ -16,7 +17,7 @@ export function ListaPacientes({
   pacientes, selecionadoId, ...acoes
 }: Props) {
   return (
-    <ul>
+    <ul className={css.lista}>
       {pacientes.map((p) => (
         <Renderometro key={p.id} id={p.nome}>
           <CartaoPaciente

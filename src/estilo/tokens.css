@@ -1,0 +1,29 @@
+/* Tokens: o nome diz a função, não a cor.
+   light-dark(tema claro, tema escuro).
+   Pares de contraste: tokens.test.ts. */
+:root {
+  color-scheme: light dark;
+
+  --fundo: light-dark(#f5f6f8, #0f141a);
+  --superficie: light-dark(#ffffff, #1a2129);
+  --texto: light-dark(#1b2430, #e6eaef);
+  --texto-fraco: light-dark(#4f5b6a, #a3afbd);
+  --borda: light-dark(#d5dbe2, #33404d);
+  --acao: light-dark(#1d4ed8, #8fb4ff);
+  --acao-texto: light-dark(#ffffff, #0f141a);
+  --foco: light-dark(#b45309, #fbbf24);
+
+  --alto-fundo: light-dark(#fde2e1, #4a1d1b);
+  --alto-texto: light-dark(#9b1c17, #ffb4ab);
+  --medio-fundo: light-dark(#fdf0d5, #43320d);
+  --medio-texto: light-dark(#7a4b00, #f5c96b);
+  --baixo-fundo: light-dark(#dcf3e6, #12372a);
+  --baixo-texto: light-dark(#16613d, #8fdcb0);
+
+  --espaco-1: 4px;
+  --espaco-2: 8px;
+  --espaco-3: 12px;
+  --espaco-4: 16px;
+  --raio: 8px;
+  --texto-pequeno: 0.8125rem;
+}
