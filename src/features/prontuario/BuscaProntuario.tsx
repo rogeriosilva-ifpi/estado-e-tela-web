@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { BarraBusca }
+  from "../pacientes/BarraBusca.tsx";
 import { useBuscaPacientes }
   from "./useBuscaPacientes.ts";
 
@@ -11,12 +13,11 @@ export function BuscaProntuario() {
 
   return (
     <>
-      <input
-        aria-label="Buscar no prontuário"
-        placeholder="nome do paciente"
-        value={termo}
-        onChange={(e) =>
-          setTermo(e.target.value)}
+      <BarraBusca
+        rotulo="Buscar no prontuário"
+        dica="nome do paciente"
+        valor={termo}
+        onMudar={setTermo}
       />
       <p>{total} encontrado(s) para
         “{termo}”</p>

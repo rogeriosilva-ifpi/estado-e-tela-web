@@ -72,3 +72,17 @@ test("resposta velha não sobrescreve a nova",
     expect(screen.getByText(/1 encontrado/))
       .toBeTruthy();
   });
+
+test("sem login, avisa em vez de quebrar",
+  async () => {
+    vi.stubGlobal("fetch", vi.fn(async () =>
+      Response.json(
+        { error: "Não autenticado." },
+        { status: 401 })));
+    render(<BuscaProntuario />);
+    await userEvent.type(screen.getByLabelText(
+      "Buscar no prontuário"), "ma");
+    expect(await screen.findByText(
+      "Entre para buscar no prontuário."))
+      .toBeTruthy();
+  });
