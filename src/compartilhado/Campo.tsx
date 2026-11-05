@@ -4,12 +4,14 @@ interface Props {
   tipo?: string;
   valor?: string;
   erro?: string;
+  onMudar?: (valor: string) => void;
 }
 
 // Rótulo, campo e erro ligados entre si: o
 // leitor de tela anuncia o erro do campo.
 export function Campo({
   nome, rotulo, tipo = "text", valor, erro,
+  onMudar,
 }: Props) {
   const idErro = `${nome}-erro`;
   return (
@@ -20,6 +22,8 @@ export function Campo({
         name={nome}
         type={tipo}
         defaultValue={valor}
+        onChange={onMudar && ((e) =>
+          onMudar(e.target.value))}
         aria-invalid={erro ? true : undefined}
         aria-describedby={
           erro ? idErro : undefined}

@@ -1,61 +1,56 @@
 import { ErroHttp, pedir }
   from "../../api/cliente.ts";
-import { NovoPaciente } from "./esquema.ts";
+import type { Dados, Erros, Passo }
+  from "./dados.ts";
 
-export type Valores = Record<string, string>;
-export type Resultado =
-  | { tipo: "ocioso" }
-  | { tipo: "invalido"; erros: Valores;
-      valores: Valores }
-  | { tipo: "erro"; msg: string;
-      valores: Valores }
-  | { tipo: "ok"; id: string };
+// A resposta do servidor, já no formato de
+// uma ação do assistente.
+export type Resposta =
+  | { tipo: "admitido"; id: string }
+  | { tipo: "recusado"; erros: Erros }
+  | { tipo: "falhou"; msg: string;
+      passo: Passo };
 
 const MSG: Record<number, string> = {
   401: "Entre antes de admitir.",
   403: "Seu papel não pode admitir.",
 };
 
-// Valida, envia e traduz a resposta num
-// resultado que a tela sabe mostrar.
 export async function admitir(
-  _anterior: Resultado, dados: FormData,
-): Promise<Resultado> {
-  const valores = Object.fromEntries(
-    dados) as Valores;
-  const v = NovoPaciente.safeParse(valores);
-  if (!v.success) {
-    const erros: Valores = {};
-    for (const i of v.error.issues) {
-      erros[String(i.path[0])] = i.message;
-    }
-    return { tipo: "invalido", erros,
-      valores };
-  }
-
+  dados: Dados,
+): Promise<Resposta> {
+  // contato vazio não vai: a API o recusaria
+  const corpo = Object.fromEntries(Object
+    .entries(dados).filter(([, v]) => v));
   try {
     type Criado = { id: string };
     const { id } = await pedir<Criado>(
       "/api/patients",
-      { metodo: "POST", corpo: v.data });
-    return { tipo: "ok", id };
+      { metodo: "POST", corpo });
+    return { tipo: "admitido", id };
   } catch (e) {
     // rede caída ou defeito: sobe ao limite
     if (!(e instanceof ErroHttp)) throw e;
-    const corpo = e.corpo as {
+    const r = e.corpo as {
       error?: string; campos?: string[] };
     if (e.status === 400) {
-      const erros: Valores = {};
-      for (const c of corpo.campos ?? []) {
-        erros[c] = "Recusado pelo servidor.";
+      const erros: Erros = {};
+      for (const c of r.campos ?? []) {
+        erros[c as keyof Dados] =
+          "Recusado pelo servidor.";
       }
-      return { tipo: "invalido", erros,
-        valores };
+      return { tipo: "recusado", erros };
     }
-    const doServidor = e.status === 409
-      ? corpo.error : undefined;
-    const msg = doServidor ?? MSG[e.status]
-      ?? "Falha no servidor. Tente de novo.";
-    return { tipo: "erro", msg, valores };
+    // CNS repetido: corrigir na identificação
+    if (e.status === 409) {
+      return { tipo: "falhou",
+        msg: r.error ?? "CNS já cadastrado.",
+        passo: "identificacao" };
+    }
+    return {
+      tipo: "falhou", passo: "confirmacao",
+      msg: MSG[e.status] ?? "Falha no "
+        + "servidor. Tente de novo.",
+    };
   }
 }

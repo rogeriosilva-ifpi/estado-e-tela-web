@@ -4,8 +4,8 @@ import { ProvedorExibicao } from
   "../compartilhado/exibicao/Provedor.tsx";
 import { FormLogin }
   from "../features/acesso/FormLogin.tsx";
-import { FormAdmissao } from
-  "../features/admissao/FormAdmissao.tsx";
+import { AssistenteAdmissao } from
+  "../features/admissao/Assistente.tsx";
 import { Ala }
   from "../features/pacientes/Ala.tsx";
 import { BuscaProntuario } from
@@ -29,7 +29,7 @@ export default function App() {
           <FormLogin />
         </Painel>
         <Painel titulo="Admissão">
-          <FormAdmissao />
+          <AssistenteAdmissao />
         </Painel>
         <Painel titulo="Busca no prontuário">
           <BuscaProntuario />
