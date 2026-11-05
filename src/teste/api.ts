@@ -1,4 +1,6 @@
 import { http, HttpResponse } from "msw/http";
+import type { Atendimento, Prescricao }
+  from "../api/atendimentos.ts";
 import type { Paciente }
   from "../api/pacientes.ts";
 import type { Usuario }
@@ -10,6 +12,7 @@ type Opcoes = {
   usuario?: Usuario | null;
   // "METODO /caminho" → status de recusa
   recusar?: Record<string, number>;
+  atendimentos?: Atendimento[];
 };
 
 const json = HttpResponse.json;
@@ -21,10 +24,14 @@ const nada = () => json({}, { status: 404 });
 // dela é trocado.
 export function apiFalsa(
   semente: Paciente[],
-  { usuario = ANA, recusar = {} }:
+  { usuario = ANA, recusar = {},
+    atendimentos = ATENDIMENTOS }:
     Opcoes = {},
 ) {
   const db = semente.map((p) => ({ ...p }));
+  const ats = atendimentos.map(
+    (a) => ({ ...a }));
+  const rxs: Prescricao[] = [];
   const pedidos: string[] = [];
   let aberta = usuario !== null;
   const quem = usuario ?? ANA;
@@ -96,6 +103,9 @@ export function apiFalsa(
         p.ativo = false;
         return json(p);
       }),
+    // depois do http.all acima: o MSW tenta
+    // os handlers na ordem do use()
+    ...rotasClinicas(quem, ats, rxs),
   );
 
   // o servidor encerra a sessão (expirou,
@@ -115,13 +125,91 @@ export const SEMENTE: Paciente[] = [
     nascimento: "1990-11-02" },
 ];
 
-// Os dois papéis da tag cap15 da API.
+// Os dois papéis da API, com as permissões
+// que /api/auth/me devolve.
 const LER = ["patient:read", "patient:create",
   "patient:update"];
 export const ANA: Usuario = { id: "u2",
   nome: "Dra. Ana", papel: "profissional",
-  permissoes:
-    [...LER, "patient:deactivate"] };
+  permissoes: [...LER, "patient:deactivate",
+    "encounter:read", "encounter:update",
+    "rx:read", "rx:create"] };
 export const CARLA: Usuario = { id: "u4",
   nome: "Carla", papel: "recepcao",
-  permissoes: LER };
+  permissoes: [...LER, "encounter:read",
+    "encounter:read_any"] };
+
+// Atendimentos e prescrições, como na tag
+// cap19 da API: escopo por papel, motivo só
+// para o autor, rx:read e rx:create.
+function rotasClinicas(quem: Usuario,
+  ats: Atendimento[], rxs: Prescricao[]) {
+  const pode = (p: string) =>
+    quem.permissoes.includes(p);
+  const negar = () =>
+    json({}, { status: 403 });
+  const visiveis = () =>
+    pode("encounter:read_any") ? ats
+      : ats.filter((a) =>
+        a.profissionalId === quem.id);
+  const saida = (a: Atendimento) =>
+    a.profissionalId === quem.id ? a
+      : { ...a, motivo: undefined };
+  const achar = (id: unknown) =>
+    visiveis().find((a) => a.id === id);
+  return [
+    http.get("/api/encounters", () =>
+      json(visiveis().map(saida))),
+    http.get("/api/encounters/:id",
+      ({ params }) => {
+        const a = achar(params.id);
+        return a ? json(saida(a)) : nada();
+      }),
+    http.patch("/api/encounters/:id",
+      async ({ params, request }) => {
+        const a = achar(params.id);
+        if (!a) return nada();
+        if (a.profissionalId !== quem.id)
+          return negar();
+        Object.assign(a,
+          await request.json());
+        return json(a);
+      }),
+    http.get("/api/medication-requests",
+      ({ request }) => {
+        if (!pode("rx:read")) return negar();
+        const id = new URL(request.url)
+          .searchParams.get("encounterId");
+        return json(rxs.filter((m) =>
+          m.atendimentoId === id));
+      }),
+    http.post(PRESCREVER,
+      async ({ params, request }) => {
+        const a = achar(params.id);
+        if (!a) return nada();
+        if (!pode("rx:create")
+          || a.profissionalId !== quem.id
+          || a.status !== "aberto")
+          return negar();
+        const m = { id: `m${rxs.length + 1}`,
+          atendimentoId: a.id,
+          profissionalId: quem.id,
+          ...(await request.json() as object),
+        } as Prescricao;
+        rxs.push(m);
+        return json(m, { status: 201 });
+      }),
+  ];
+}
+
+const PRESCREVER = "/api/encounters/:id"
+  + "/medication-requests";
+
+export const ATENDIMENTOS: Atendimento[] = [
+  { id: "e1", pacienteId: "p1",
+    profissionalId: "u2", status: "aberto",
+    motivo: "Dor torácica" },
+  { id: "e2", pacienteId: "p2",
+    profissionalId: "u3", status: "aberto",
+    motivo: "Febre há 3 dias" },
+];
