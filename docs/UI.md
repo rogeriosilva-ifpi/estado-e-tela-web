@@ -72,7 +72,9 @@ catálogo só no terceiro uso real.
   as ações (`AcoesContext`, valor estável). Quem lê o tema não renderiza
   quando o modo discreto muda.
 - Todo nome de paciente na tela passa por `useExibirNome()`.
-- Dado do servidor não vai para contexto: é estado remoto (capítulo 14).
+- Dado do servidor não vai para contexto nem para `useState`: mora no
+  cache do TanStack Query (`features/*/consultas.ts`, chaves em
+  `docs/API.md`).
 - Vários `useState` que mudam juntos, ou regras do tipo "nesta fase isto
   não vale", pedem `useReducer`: estado em união discriminada por fase,
   ações em união por `tipo`, reducer puro testado sem tela

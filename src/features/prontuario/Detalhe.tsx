@@ -1,10 +1,10 @@
+import { useSuspenseQuery }
+  from "@tanstack/react-query";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useLoaderData } from "react-router";
-import {
-  editarPaciente, type Edicao,
-  inativarPaciente,
-} from "../../api/pacientes.ts";
+import { useParams } from "react-router";
+import type { Edicao }
+  from "../../api/pacientes.ts";
 import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { Botao }
@@ -15,21 +15,24 @@ import { Modal }
   from "../../compartilhado/Modal.tsx";
 import { useExibirNome } from
   "../../compartilhado/exibicao/contextos.ts";
-import type { carregarPaciente }
-  from "./detalhe.ts";
+import {
+  consultaPaciente, useEditarPaciente,
+  useInativarPaciente,
+} from "./consultas.ts";
 
 export function DetalhePaciente() {
-  const doServidor = useLoaderData<
-    typeof carregarPaciente>();
-  // cópia local, para mostrar o que foi salvo
-  const [p, setP] = useState(doServidor);
-  const [aviso, setAviso] =
-    useState<string>();
+  const { id = "" } = useParams();
+  // Nada de cópia: lê do cache, que o loader
+  // encheu e que as mutações atualizam.
+  const { data: p } = useSuspenseQuery(
+    consultaPaciente(id));
+  const editar = useEditarPaciente(id);
+  const inativar = useInativarPaciente(id);
   const [confirmar, setConfirmar] =
     useState(false);
   const exibir = useExibirNome();
 
-  async function salvar(
+  function salvar(
     e: FormEvent<HTMLFormElement>,
   ) {
     e.preventDefault();
@@ -38,13 +41,7 @@ export function DetalhePaciente() {
       nome: String(f.get("nome")) };
     const tel = String(f.get("telefone"));
     if (tel) dados.telefone = tel;
-    setP(await editarPaciente(p.id, dados));
-    setAviso("Alterações salvas.");
-  }
-
-  async function inativar() {
-    setP(await inativarPaciente(p.id));
-    setConfirmar(false);
+    editar.mutate(dados);
   }
 
   return (
@@ -57,18 +54,24 @@ export function DetalhePaciente() {
         <dt>Nascimento</dt>
         <dd>{p.nascimento}</dd>
       </dl>
-      <form onSubmit={salvar}>
+      {/* key: outro paciente, outro form */}
+      <form key={p.id} onSubmit={salvar}>
         <Campo nome="nome" rotulo="Nome"
           valor={p.nome} />
         <Campo nome="telefone"
           rotulo="Telefone"
           valor={p.telefone} />
-        <Botao type="submit">Salvar</Botao>
+        <Botao type="submit"
+          disabled={editar.isPending}>
+          Salvar</Botao>
       </form>
-      {aviso && (
-        <Aviso tom="info">{aviso}</Aviso>
+      {editar.isError && (
+        <Aviso tom="erro">
+          Não foi salvo; o nome voltou ao
+          anterior.</Aviso>
       )}
       <Botao variante="perigo"
+        disabled={p.ativo === false}
         onClick={() => setConfirmar(true)}>
         Inativar</Botao>
       <Modal aberto={confirmar}
@@ -80,7 +83,10 @@ export function DetalhePaciente() {
           onClick={() => setConfirmar(false)}>
           Cancelar</Botao>{" "}
         <Botao variante="perigo"
-          onClick={inativar}>
+          onClick={() => {
+            inativar.mutate();
+            setConfirmar(false);
+          }}>
           Confirmar inativação</Botao>
       </Modal>
     </article>

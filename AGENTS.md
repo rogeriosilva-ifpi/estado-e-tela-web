@@ -25,8 +25,8 @@ laboratório do ebook *Estado & Tela*.
 
 ## Regras
 
-- Leia `INVARIANTES.md` e `docs/UI.md`
-  antes de editar.
+- Leia `INVARIANTES.md`, `docs/UI.md` e
+  `docs/API.md` antes de editar.
   Regra violada é defeito.
 - Dependência nova só com pedido: diga
   o motivo e a alternativa.

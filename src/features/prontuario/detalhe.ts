@@ -1,20 +1,22 @@
 import {
   data, type LoaderFunctionArgs, redirect,
 } from "react-router";
-import { ErroHttp, pedir }
+import { ErroHttp }
   from "../../api/cliente.ts";
-import type { Paciente }
-  from "../../api/pacientes.ts";
+import { consultas }
+  from "../../api/consultas.ts";
+import { consultaPaciente }
+  from "./consultas.ts";
 
-// Carrega o paciente antes de a página
-// aparecer: a rota só renderiza com o dado.
+// Garante o paciente no cache antes de a
+// rota aparecer: se já está fresco, nem vai
+// à rede. O componente lê do mesmo cache.
 export async function carregarPaciente(
   { params, request }: LoaderFunctionArgs,
 ) {
   try {
-    return await pedir<Paciente>(
-      `/api/patients/${params.id}`,
-      { sinal: request.signal });
+    return await consultas.ensureQueryData(
+      consultaPaciente(params.id!));
   } catch (e) {
     if (!(e instanceof ErroHttp)) throw e;
     if (e.status === 401) {

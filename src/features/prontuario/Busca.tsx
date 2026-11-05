@@ -1,5 +1,7 @@
 import { Link, Outlet, useSearchParams }
   from "react-router";
+import { ErroHttp }
+  from "../../api/cliente.ts";
 import { POR_PAGINA }
   from "../../api/pacientes.ts";
 import { Aviso }
@@ -10,8 +12,8 @@ import { Botao }
   from "../../compartilhado/Botao.tsx";
 import { useExibirNome } from
   "../../compartilhado/exibicao/contextos.ts";
-import { useBuscaPacientes }
-  from "./useBuscaPacientes.ts";
+import { AVISO, useBusca }
+  from "./consultas.ts";
 
 // Busca pacientes de todo o hospital, no
 // servidor, a cada tecla. O detalhe do
@@ -32,8 +34,13 @@ export function BuscaProntuario() {
     setParams(t ? { q: t } : {},
       { replace: true, flushSync: true });
   const exibir = useExibirNome();
-  const { achados, total, aviso } =
-    useBuscaPacientes(termo, pagina);
+  const { data, error } =
+    useBusca(termo, pagina);
+  const achados =
+    (termo && data?.itens) || [];
+  const total = (termo && data?.total) || 0;
+  const aviso = error instanceof ErroHttp
+    ? AVISO[error.status] : undefined;
   const paginas = Math.max(1,
     Math.ceil(total / POR_PAGINA));
   // trocar de página é um passo no histórico
