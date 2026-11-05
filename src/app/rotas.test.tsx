@@ -4,15 +4,20 @@ import {
 import userEvent
   from "@testing-library/user-event";
 import {
-  afterEach, expect, test, vi,
+  afterEach, beforeEach, expect, test, vi,
 } from "vitest";
+import { esquecer, lembrar }
+  from "../compartilhado/sessao.ts";
 import { apiFalsa, SEMENTE }
   from "../teste/api.ts";
 import { abrir } from "../teste/rota.tsx";
 
+beforeEach(() => lembrar(
+  { nome: "Dra. Ana", papel: "profissional" }));
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  localStorage.clear();
 });
 
 // API falsa: responde pelo caminho pedido.
@@ -79,6 +84,7 @@ test("rota desconhecida fica no layout",
 
 test("sem login, o detalhe leva ao login",
   async () => {
+    esquecer();
     api({ "/api/patients/p1": [401,
       { error: "Não autenticado." }] });
     const router = abrir("/pacientes/p1");
@@ -126,3 +132,12 @@ test("trocar de paciente troca o detalhe",
     expect(await screen.findByText(
       "898009876543210")).toBeTruthy();
   });
+
+test("recepção não vê Inativar", async () => {
+  lembrar({ nome: "Carla", papel: "recepcao" });
+  apiFalsa(SEMENTE);
+  abrir("/pacientes/p1");
+  await screen.findByText("898001234567890");
+  expect(within(aberto()).queryByRole(
+    "button", { name: "Inativar" })).toBeNull();
+});

@@ -8,13 +8,15 @@ import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { Botao }
   from "../../compartilhado/Botao.tsx";
+import { lembrar, type Usuario }
+  from "../../compartilhado/sessao.ts";
 
 type Estado =
   | { tipo: "ocioso" }
   | { tipo: "enviando" }
   | { tipo: "erro"; msg: string }
   | { tipo: "ok"; nome: string };
-type Sessao = { usuario: { nome: string } };
+type Sessao = { usuario: Usuario };
 
 // Formulário controlado: cada tecla passa
 // pelo estado do React.
@@ -42,6 +44,7 @@ export function FormLogin() {
       const { usuario } = await pedir<Sessao>(
         "/api/auth/login", { metodo: "POST",
           corpo: { email, senha } });
+      lembrar(usuario);
       setEstado(
         { tipo: "ok", nome: usuario.nome });
       navegar(destino(params.get("volta")),

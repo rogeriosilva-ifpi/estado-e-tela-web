@@ -15,6 +15,8 @@ import { Modal }
   from "../../compartilhado/Modal.tsx";
 import { useExibirNome } from
   "../../compartilhado/exibicao/contextos.ts";
+import { usuarioAtual }
+  from "../../compartilhado/sessao.ts";
 import {
   consultaPaciente, useEditarPaciente,
   useInativarPaciente,
@@ -31,6 +33,9 @@ export function DetalhePaciente() {
   const [confirmar, setConfirmar] =
     useState(false);
   const exibir = useExibirNome();
+  // recepção não inativa
+  const recepcao =
+    usuarioAtual()?.papel === "recepcao";
 
   function salvar(
     e: FormEvent<HTMLFormElement>,
@@ -70,10 +75,11 @@ export function DetalhePaciente() {
           Não foi salvo; o nome voltou ao
           anterior.</Aviso>
       )}
-      <Botao variante="perigo"
-        disabled={p.ativo === false}
-        onClick={() => setConfirmar(true)}>
-        Inativar</Botao>
+      {!recepcao && (
+        <Botao variante="perigo"
+          disabled={p.ativo === false}
+          onClick={() => setConfirmar(true)}>
+          Inativar</Botao>)}
       <Modal aberto={confirmar}
         titulo={`Inativar ${exibir(p.nome)}?`}
         onFechar={() => setConfirmar(false)}>

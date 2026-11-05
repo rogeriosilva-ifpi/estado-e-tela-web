@@ -1,9 +1,15 @@
-import { NavLink, Outlet, useMatches }
-  from "react-router";
+import {
+  NavLink, Outlet, useMatches, useNavigate,
+} from "react-router";
+import { pedir } from "../api/cliente.ts";
 import { Painel }
   from "../compartilhado/Painel.tsx";
+import { Botao }
+  from "../compartilhado/Botao.tsx";
 import { ProvedorExibicao } from
   "../compartilhado/exibicao/Provedor.tsx";
+import { esquecer, usuarioAtual }
+  from "../compartilhado/sessao.ts";
 import css from "./Layout.module.css";
 import { Preferencias }
   from "./Preferencias.tsx";
@@ -17,6 +23,16 @@ export function Layout() {
   const titulo = useMatches()
     .map((m) => (m.handle as Handle)?.titulo)
     .filter(Boolean).at(-1);
+  const navegar = useNavigate();
+  const usuario = usuarioAtual();
+
+  async function sair() {
+    await pedir("/api/auth/logout",
+      { metodo: "POST" });
+    esquecer();
+    navegar("/entrar");
+  }
+
   return (
     <ProvedorExibicao>
       <main>
@@ -30,9 +46,15 @@ export function Layout() {
               Prontuário</NavLink>
             <NavLink to="/admissao">
               Admissão</NavLink>
-            <NavLink to="/entrar">
-              Entrar</NavLink>
+            {!usuario && (
+              <NavLink to="/entrar">
+                Entrar</NavLink>)}
           </nav>
+          {usuario && (
+            <p>{usuario.nome}{" "}
+              <Botao variante="secundaria"
+                onClick={sair}>Sair</Botao>
+            </p>)}
           <StatusApi />
           <Preferencias />
         </header>

@@ -14,6 +14,7 @@ import { ErroDeRota } from "./ErroDeRota.tsx";
 import { Layout } from "./Layout.tsx";
 import { NaoEncontrada }
   from "./NaoEncontrada.tsx";
+import { Protegida } from "./Protegida.tsx";
 
 // Baixa o código da admissão (e o Zod) só
 // quando alguém abre a rota.
@@ -32,19 +33,22 @@ export const rotas: RouteObject[] = [{
     ErrorBoundary: ErroDeRota,
     children: [
       { index: true, Component: Ala },
-      { path: "pacientes",
-        handle: { titulo: "Prontuário" },
-        Component: BuscaProntuario,
-        // mestre-detalhe: a lista continua
-        // montada com o paciente aberto
-        children: [{
-          path: ":id",
-          loader: carregarPaciente,
-          ErrorBoundary: ErroDeRota,
-          Component: DetalhePaciente }] },
-      { path: "admissao",
-        handle: { titulo: "Admissão" },
-        lazy: admissao },
+      // só para quem entrou
+      { Component: Protegida, children: [
+        { path: "pacientes",
+          handle: { titulo: "Prontuário" },
+          Component: BuscaProntuario,
+          // mestre-detalhe: a lista continua
+          // montada com o paciente aberto
+          children: [{
+            path: ":id",
+            loader: carregarPaciente,
+            ErrorBoundary: ErroDeRota,
+            Component: DetalhePaciente }] },
+        { path: "admissao",
+          handle: { titulo: "Admissão" },
+          lazy: admissao },
+      ] },
       { path: "entrar",
         handle: { titulo: "Entrar" },
         Component: FormLogin },
