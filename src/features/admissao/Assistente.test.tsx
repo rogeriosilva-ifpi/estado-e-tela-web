@@ -6,8 +6,13 @@ import userEvent
 import {
   afterEach, expect, test, vi,
 } from "vitest";
-import { AssistenteAdmissao }
+import { MemoryRouter } from "react-router";
+import { AssistenteAdmissao as Original }
   from "./Assistente.tsx";
+
+// o assistente tem links: precisa de rota
+const AssistenteAdmissao = () => (
+  <MemoryRouter><Original /></MemoryRouter>);
 
 afterEach(() => {
   cleanup();

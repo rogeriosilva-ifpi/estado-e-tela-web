@@ -3,6 +3,7 @@ import {
   useRef,
 } from "react";
 import type { FormEvent } from "react";
+import { Link } from "react-router";
 import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { Botao }
@@ -44,6 +45,8 @@ export function AssistenteAdmissao() {
         <Aviso tom="info">
           Paciente {estado.id} admitido.
         </Aviso>
+        <Link to={`/pacientes/${estado.id}`}>
+          Abrir prontuário</Link>{" "}
         <Botao variante="secundaria"
           onClick={() =>
             despachar({ tipo: "recomecar" })}>

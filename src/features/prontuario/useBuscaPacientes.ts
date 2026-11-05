@@ -28,9 +28,13 @@ export function useBuscaPacientes(
   useEffect(() => {
     if (!termo) return;
     const ctrl = new AbortController();
+    // repassa só o ?atraso= do laboratório:
+    // o q da página já é o termo
+    const atraso = new URLSearchParams(
+      location.search).get("atraso");
     const url = "/api/patients?q="
       + encodeURIComponent(termo)
-      + location.search.replace("?", "&");
+      + (atraso ? `&atraso=${atraso}` : "");
     const sinal = ctrl.signal;
     pedir<Achado[]>(url, { sinal })
       .then((achados) =>

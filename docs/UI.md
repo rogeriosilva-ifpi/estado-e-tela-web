@@ -51,6 +51,18 @@ catálogo só no terceiro uso real.
 
 `<button>` e `<dialog>` crus são erro de lint fora do catálogo.
 
+## Rotas
+
+- As rotas moram em `src/app/rotas.tsx` (React Router 8, modo de dados).
+  Página nova = rota nova com `handle: { titulo }`; o `Layout` põe o
+  título no painel.
+- O que cabe num link vai na URL: `?q=`, `?pagina=`, `/pacientes/:id`.
+  Campo que escreve na URL usa `setSearchParams(..., { replace: true,
+  flushSync: true })`.
+- Dado que a página precisa para existir vem do `loader` da rota.
+- Rota pesada que pouca gente abre usa `lazy` com `import()` de caminho
+  literal (o Vite só divide o código com string literal).
+
 ## Estado compartilhado
 
 - Primeiro tente composição (passar `children`) e props. Contexto é para

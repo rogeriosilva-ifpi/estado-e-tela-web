@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams }
+  from "react-router";
 import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { BarraBusca }
@@ -12,7 +12,18 @@ import { useBuscaPacientes }
 // Busca pacientes de todo o hospital, no
 // servidor, a cada tecla.
 export function BuscaProntuario() {
-  const [termo, setTermo] = useState("");
+  // O termo mora na URL: sobrevive ao Voltar,
+  // ao recarregar e a um link enviado.
+  const [params, setParams] =
+    useSearchParams();
+  const termo = params.get("q") ?? "";
+  // replace: uma tecla não vira um passo no
+  // histórico. flushSync: o roteador atualiza
+  // dentro de uma transição, e o campo, que
+  // lê a URL, perderia teclas.
+  const setTermo = (t: string) =>
+    setParams(t ? { q: t } : {},
+      { replace: true, flushSync: true });
   const exibir = useExibirNome();
   const { achados, aviso } =
     useBuscaPacientes(termo);

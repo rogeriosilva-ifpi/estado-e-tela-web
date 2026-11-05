@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate, useSearchParams }
+  from "react-router";
 import type { FormEvent } from "react";
 import { ErroHttp, pedir }
   from "../../api/cliente.ts";
@@ -16,7 +18,16 @@ type Sessao = { usuario: { nome: string } };
 
 // Formulário controlado: cada tecla passa
 // pelo estado do React.
+// Só caminhos internos: "?volta=//site.com"
+// não pode levar ninguém para fora.
+function destino(volta: string | null) {
+  return volta?.startsWith("/")
+    && !volta.startsWith("//") ? volta : "/";
+}
+
 export function FormLogin() {
+  const navegar = useNavigate();
+  const [params] = useSearchParams();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [estado, setEstado] =
@@ -33,6 +44,8 @@ export function FormLogin() {
           corpo: { email, senha } });
       setEstado(
         { tipo: "ok", nome: usuario.nome });
+      navegar(destino(params.get("volta")),
+        { replace: true });
     } catch (erro) {
       const negado = erro instanceof ErroHttp
         && erro.status === 401;

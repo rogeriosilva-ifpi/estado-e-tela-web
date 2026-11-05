@@ -1,4 +1,4 @@
-import { Outlet, useMatches }
+import { NavLink, Outlet, useMatches }
   from "react-router";
 import { Painel }
   from "../compartilhado/Painel.tsx";
@@ -24,11 +24,14 @@ export function Layout() {
           <h1>Mini-Prontuário</h1>
           <nav aria-label="Principal"
             className={css.menu}>
-            <a href="/">Ala B</a>
-            <a href="/pacientes">
-              Prontuário</a>
-            <a href="/admissao">Admissão</a>
-            <a href="/entrar">Entrar</a>
+            <NavLink to="/" end>
+              Ala B</NavLink>
+            <NavLink to="/pacientes">
+              Prontuário</NavLink>
+            <NavLink to="/admissao">
+              Admissão</NavLink>
+            <NavLink to="/entrar">
+              Entrar</NavLink>
           </nav>
           <StatusApi />
           <Preferencias />
