@@ -21,6 +21,12 @@ npm run dev        # http://localhost:5173
 npm run gate       # tipos, lint, fronteiras, testes e build
 ```
 
+**Safari e outros navegadores WebKit** recusam o cookie de sessão
+(`Secure`) em `http://localhost`: o login responde 200 e a sessão some no
+pedido seguinte. Use `npm run dev:https` (https://localhost:5173, com
+certificado autoassinado que o navegador pede para aceitar). Chrome e Edge
+funcionam nos dois.
+
 ## Mapa das tags
 
 | Tag | O que tem |
@@ -56,6 +62,7 @@ npm run gate       # tipos, lint, fronteiras, testes e build
 | `cap15` | sessão de `/api/auth/me` no cache, middleware `exigirSessao`, 401 leva ao login e volta, `usePode` (API `cap15`) |
 | `cap16-antes` | parâmetros da busca em inglês e teste de paginação com `vi.mock` do hook: verde, e a página 2 mostra a página 1 |
 | `cap16` | MSW na fronteira, jornada E2E no Playwright, React Compiler ligado; UI-24 e UI-25 |
+| `cap19` | entrega em 12 passos: painel de atendimentos, ficha com prescrição (`rx:create`), `npm run dev:https` para o WebKit; `docs/PLANO-cap19.md`, `docs/REVISAO-cap19.md`, `docs/PR-cap19.md`; UI-26 (API `cap19`) |
 
 Todos os pacientes são fictícios.
 

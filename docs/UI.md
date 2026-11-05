@@ -125,3 +125,12 @@ catálogo só no terceiro uso real.
   com a API rodando.
 - O React Compiler memoiza. `useMemo`/`useCallback` só com número do
   Renderômetro que justifique.
+
+## Atendimentos (capítulo 19)
+
+- Painel em `/atendimentos`, ficha em `/atendimentos/:id`; componentes de
+  apresentação em `features/atendimentos/`, a rota liga dados e ações.
+- `motivo` ausente: "Motivo visível só para o profissional responsável".
+- Prescrever: `usePode("rx:create")` e atendimento aberto. Finalizar: o
+  autor, com confirmação no `Modal`.
+- Prescrição não é otimista: aparece depois do 201.
