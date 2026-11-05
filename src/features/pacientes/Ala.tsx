@@ -14,9 +14,7 @@ import { ResumoAla } from "./ResumoAla.tsx";
 
 // Coordena: guarda o estado, calcula o que
 // é derivado e compõe a tela com as peças.
-export function Ala(
-  { discreto }: { discreto: boolean },
-) {
+export function Ala() {
   const [busca, setBusca] = useState("");
   const [pacientes, setPacientes] =
     useState(ALA_B);
@@ -61,7 +59,6 @@ export function Ala(
         ) : (
           <ListaPacientes
             pacientes={visiveis}
-            discreto={discreto}
             selecionadoId={selecionadoId}
             onSelecionar={setSelecionadoId}
             onPrioridade={alternarPrioridade}
@@ -71,8 +68,7 @@ export function Ala(
       </Painel>
       <Painel titulo="Detalhe">
         <PainelDetalhe
-          paciente={selecionado}
-          discreto={discreto} />
+          paciente={selecionado} />
       </Painel>
       <ConfirmaAlta
         nome={saindo?.nome}

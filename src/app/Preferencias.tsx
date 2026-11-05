@@ -1,29 +1,27 @@
-export type Tema = "sistema" | "claro"
-  | "escuro";
-
-interface Props {
-  discreto: boolean;
-  onDiscreto: (v: boolean) => void;
-  tema: Tema;
-  onTema: (t: Tema) => void;
-}
+import {
+  type Tema, useAcoesExibicao,
+  useDiscreto, useTema,
+} from
+  "../compartilhado/exibicao/contextos.ts";
 
 // Preferências de exibição desta tela.
-export function Preferencias({
-  discreto, onDiscreto, tema, onTema,
-}: Props) {
+export function Preferencias() {
+  const discreto = useDiscreto();
+  const tema = useTema();
+  const { setDiscreto, setTema } =
+    useAcoesExibicao();
   return (
     <p>
       <label>
         <input type="checkbox"
           checked={discreto}
           onChange={(e) =>
-            onDiscreto(e.target.checked)} />
+            setDiscreto(e.target.checked)} />
         {" "}Modo discreto (só iniciais)
       </label>{" "}
       <select aria-label="Tema" value={tema}
         onChange={(e) =>
-          onTema(e.target.value as Tema)}>
+          setTema(e.target.value as Tema)}>
         <option value="sistema">
           Sistema</option>
         <option value="claro">Claro</option>

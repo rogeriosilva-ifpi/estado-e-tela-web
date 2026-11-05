@@ -3,17 +3,16 @@ import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { BarraBusca }
   from "../../compartilhado/BarraBusca.tsx";
-import { iniciais }
-  from "../../compartilhado/nome.ts";
+import { useExibirNome } from
+  "../../compartilhado/exibicao/contextos.ts";
 import { useBuscaPacientes }
   from "./useBuscaPacientes.ts";
 
 // Busca pacientes de todo o hospital, no
 // servidor, a cada tecla.
-export function BuscaProntuario(
-  { discreto }: { discreto: boolean },
-) {
+export function BuscaProntuario() {
   const [termo, setTermo] = useState("");
+  const exibir = useExibirNome();
   const { achados, aviso } =
     useBuscaPacientes(termo);
   const total = achados.length; // derivado
@@ -34,10 +33,7 @@ export function BuscaProntuario(
       )}
       <ul aria-label="Resultados">
         {achados.map((a) => (
-          <li key={a.id}>
-            {discreto
-              ? iniciais(a.nome) : a.nome}
-          </li>
+          <li key={a.id}>{exibir(a.nome)}</li>
         ))}
       </ul>
     </>

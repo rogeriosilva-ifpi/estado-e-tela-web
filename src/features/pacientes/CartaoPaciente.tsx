@@ -1,28 +1,26 @@
 import css from "./CartaoPaciente.module.css";
 import { Botao }
   from "../../compartilhado/Botao.tsx";
-import { iniciais }
-  from "../../compartilhado/nome.ts";
+import { useExibirNome } from
+  "../../compartilhado/exibicao/contextos.ts";
 import { SeloRisco } from "./SeloRisco.tsx";
 import type { Paciente } from "./tipos.ts";
 
 interface Props {
   paciente: Paciente;
   selecionado: boolean;
-  discreto: boolean;
   onSelecionar: (id: string) => void;
   onPrioridade: (id: string) => void;
   onAlta: (id: string) => void;
 }
 
 export function CartaoPaciente({
-  paciente, selecionado, discreto,
+  paciente, selecionado,
   onSelecionar, onPrioridade, onAlta,
 }: Props) {
   const { id, nome, leito, risco } = paciente;
   const atual = selecionado || undefined;
-  const exibido = discreto
-    ? iniciais(nome) : nome;
+  const exibido = useExibirNome()(nome);
   return (
     <li className={css.cartao}
       aria-current={atual}>

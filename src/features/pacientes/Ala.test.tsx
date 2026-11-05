@@ -33,7 +33,7 @@ async function darAlta(nome: string) {
 
 test("anotação acompanha o paciente",
   async () => {
-    render(<Ala discreto={false} />);
+    render(<Ala />);
     await userEvent.type(
       nota("João Lima"), "ver febre");
     await darAlta("Maria Souza");
@@ -42,7 +42,7 @@ test("anotação acompanha o paciente",
   });
 
 test("alto risco cai na alta", async () => {
-  render(<Ala discreto={false} />);
+  render(<Ala />);
   await darAlta("Maria Souza");
   expect(screen.getByText(/alto risco: 1/))
     .toBeTruthy();
@@ -50,7 +50,7 @@ test("alto risco cai na alta", async () => {
 
 test("anotação sobrevive à busca",
   async () => {
-    render(<Ala discreto={false} />);
+    render(<Ala />);
     await userEvent.type(
       nota("João Lima"), "ver febre");
     await buscar("o");
@@ -59,7 +59,7 @@ test("anotação sobrevive à busca",
   });
 
 test("busca vazia avisa", async () => {
-  render(<Ala discreto={false} />);
+  render(<Ala />);
   await buscar("xyz");
   expect(screen.getByText(
     "Nenhum paciente encontrado.",
@@ -74,7 +74,7 @@ const cartao = (nome: string) =>
 
 test("selecionar mostra o detalhe",
   async () => {
-    render(<Ala discreto={false} />);
+    render(<Ala />);
     const joao = cartao("João Lima");
     await userEvent.click(joao.getByRole(
       "button", { name: "João Lima" }));
@@ -84,7 +84,7 @@ test("selecionar mostra o detalhe",
 
 test("prioridade no cartão e no detalhe",
   async () => {
-    render(<Ala discreto={false} />);
+    render(<Ala />);
     const joao = cartao("João Lima");
     await userEvent.click(joao.getByRole(
       "button", { name: "João Lima" }));
@@ -98,7 +98,7 @@ test("prioridade no cartão e no detalhe",
 
 test("alta pede confirmação num diálogo",
   async () => {
-    render(<Ala discreto={false} />);
+    render(<Ala />);
     await pedirAlta("Maria Souza");
     const dialogo = screen.getByRole("dialog",
       { name: "Dar alta a Maria Souza?" });

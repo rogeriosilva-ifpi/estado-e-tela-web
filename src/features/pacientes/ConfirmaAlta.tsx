@@ -2,6 +2,8 @@ import { Botao }
   from "../../compartilhado/Botao.tsx";
 import { Modal }
   from "../../compartilhado/Modal.tsx";
+import { useExibirNome } from
+  "../../compartilhado/exibicao/contextos.ts";
 
 interface Props {
   nome?: string;
@@ -15,9 +17,11 @@ interface Props {
 export function ConfirmaAlta({
   nome, onConfirmar, onCancelar,
 }: Props) {
+  const exibir = useExibirNome();
   return (
     <Modal aberto={nome !== undefined}
-      titulo={`Dar alta a ${nome}?`}
+      titulo={`Dar alta a ${
+        exibir(nome ?? "")}?`}
       onFechar={onCancelar}>
       <p>O paciente sai da lista da Ala B.</p>
       <Botao variante="secundaria"

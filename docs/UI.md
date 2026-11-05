@@ -51,6 +51,17 @@ catálogo só no terceiro uso real.
 
 `<button>` e `<dialog>` crus são erro de lint fora do catálogo.
 
+## Estado compartilhado
+
+- Primeiro tente composição (passar `children`) e props. Contexto é para
+  o que muitas features leem: hoje, só as preferências de exibição
+  (`compartilhado/exibicao/`).
+- Um contexto por assunto (`DiscretoContext`, `TemaContext`) e um para
+  as ações (`AcoesContext`, valor estável). Quem lê o tema não renderiza
+  quando o modo discreto muda.
+- Todo nome de paciente na tela passa por `useExibirNome()`.
+- Dado do servidor não vai para contexto: é estado remoto (capítulo 14).
+
 ## Componentes
 
 - Um componente por arquivo, nome em PascalCase igual ao do arquivo.
