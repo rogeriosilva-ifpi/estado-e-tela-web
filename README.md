@@ -10,7 +10,7 @@ Primeiro a API, num terminal:
 ```bash
 git clone https://github.com/rogeriosilva-ifpi/estado-e-tela-api
 cd estado-e-tela-api && npm install
-git checkout cap12 && npm start      # :3000 (cap07 até o cap. 11; cap12 no 12)
+git checkout cap14 && npm start      # :3000; use a tag da API indicada no capítulo
 ```
 
 Depois a tela, em outro:
@@ -48,6 +48,10 @@ npm run gate       # tipos, lint, fronteiras, testes e build
 | `cap11` | `compartilhado/exibicao/`: três contextos e provedor que recebe `children` |
 | `cap12-antes` | assistente de admissão em três passos com seis `useState` |
 | `cap12` | `useReducer` com estado por fase; reducer testado sem tela (API `cap12`) |
+| `cap13-antes` | rotas com menu em `<a href>`, busca em `useState`, sem 404 |
+| `cap13` | React Router 8 (modo de dados): busca na URL, loader, erros no layout, admissão sob demanda |
+| `cap14-antes` | mestre-detalhe paginado; detalhe copiado para `useState` (API `cap14`) |
+| `cap14` | TanStack Query: cache, edição otimista com reversão, invalidação; `docs/API.md` |
 
 Todos os pacientes são fictícios.
 
