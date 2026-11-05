@@ -102,6 +102,8 @@ test("A6: finalizar fecha a prescrição",
     await userEvent.click(await screen
       .findByRole("button",
         { name: "Finalizar atendimento" }));
+    await userEvent.click(screen.getByRole(
+      "button", { name: "Confirmar" }));
     expect(await within(await ficha())
       .findByText("Finalizado")).toBeTruthy();
     expect(screen.queryByRole("form",

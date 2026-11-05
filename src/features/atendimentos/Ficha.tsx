@@ -1,5 +1,6 @@
 import { useQuery, useSuspenseQuery }
   from "@tanstack/react-query";
+import { useState } from "react";
 import { useParams } from "react-router";
 import { ErroHttp }
   from "../../api/cliente.ts";
@@ -9,6 +10,8 @@ import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { Botao }
   from "../../compartilhado/Botao.tsx";
+import { Modal }
+  from "../../compartilhado/Modal.tsx";
 import { useExibirNome } from
   "../../compartilhado/exibicao/contextos.ts";
 import { usePode, useSessao }
@@ -40,6 +43,10 @@ export function FichaDaRota() {
   const exibir = useExibirNome();
   const prescrever = usePrescrever(id);
   const finalizar = useFinalizar(id);
+  // finalizar encerra a prescrição: pede
+  // confirmação, como Inativar (passo 10)
+  const [confirmar, setConfirmar] =
+    useState(false);
 
   // rx:create diz que o papel prescreve; a
   // API ainda confere autor, status e
@@ -75,9 +82,22 @@ export function FichaDaRota() {
       {autor && aberto && (
         <Botao variante="secundaria"
           disabled={finalizar.isPending}
-          onClick={() => finalizar.mutate()}>
+          onClick={() => setConfirmar(true)}>
           Finalizar atendimento</Botao>
       )}
+      <Modal aberto={confirmar}
+        titulo="Finalizar o atendimento?"
+        onFechar={() => setConfirmar(false)}>
+        <p>Depois de finalizado, não aceita
+          prescrição.</p>
+        <Botao variante="secundaria"
+          onClick={() => setConfirmar(false)}>
+          Cancelar</Botao>{" "}
+        <Botao onClick={() => {
+          finalizar.mutate();
+          setConfirmar(false);
+        }}>Confirmar</Botao>
+      </Modal>
       {finalizar.isError && (
         <Aviso tom="erro">
           Não foi finalizado.</Aviso>
