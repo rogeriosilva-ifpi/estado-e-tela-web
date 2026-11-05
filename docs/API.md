@@ -1,6 +1,6 @@
 # Contrato da API (o que a tela usa)
 
-Fonte: `estado-e-tela-api`, tag `cap15`. Mudou aqui, muda
+Fonte: `estado-e-tela-api`, tag `cap19`. Mudou aqui, muda
 `src/api/pacientes.ts` e os testes, no mesmo commit.
 
 Todas as rotas de pacientes exigem sessão (cookie). 401 sem sessão, 403
@@ -20,12 +20,32 @@ sem permissão, 404 quando o paciente não existe, 400 com
 
 `Paciente`: `{ id, nome, cns, nascimento, telefone?, responsavel?, ativo? }`.
 
+## Atendimentos e prescrições (capítulo 19)
+
+| Método e caminho | Corpo | Resposta |
+|---|---|---|
+| `GET /api/encounters` | — | `Atendimento[]` visíveis: o profissional vê os seus; quem tem `encounter:read_any` (admin, recepção) vê todos |
+| `GET /api/encounters/:id` | — | `Atendimento`; 404 se não é visível |
+| `PATCH /api/encounters/:id` | `{ motivo?, status? }` | `Atendimento`; só o autor (403 para os outros); campo extra é 400 |
+| `GET /api/medication-requests?encounterId=` | — | `Prescricao[]` do atendimento; exige `rx:read` |
+| `POST /api/encounters/:id/medication-requests` | `{ medicamento, posologia }` | 201 `Prescricao`; exige `rx:create` **e** ser o autor, atendimento aberto, de plantão; senão 403 sem motivo |
+
+`Atendimento`: `{ id, pacienteId, profissionalId, status, motivo? }`. O
+`motivo` é dado clínico: só vem para o autor. `status`: `"aberto"` ou
+`"finalizado"`. `Prescricao`: `{ id, atendimentoId, profissionalId,
+medicamento, posologia }`.
+
+A permissão `rx:create` em `/api/auth/me` diz que o papel **pode**
+prescrever; a API ainda confere autor, status e plantão a cada pedido.
+
 ## Cache na tela (TanStack Query)
 
 | Chave | Quem lê | Quem invalida |
 |---|---|---|
 | `["sessao"]` | middleware `exigirSessao`, `useSessao`, `usePode` | login e sair limpam; 401 grava `null` |
 | `["pacientes", "busca", q, pagina]` | `useBusca` | edição e inativação |
+| `["atendimentos"]`, `["atendimentos", id]` | painel e ficha | finalizar |
+| `["prescricoes", atendimentoId]` | ficha | prescrever |
 | `["pacientes", "um", id]` | loader de `/pacientes/:id` e `DetalhePaciente` | edição (otimista) e inativação |
 
 Invalidar `["pacientes"]` alcança as duas.
