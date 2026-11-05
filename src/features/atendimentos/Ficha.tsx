@@ -29,8 +29,12 @@ export function FichaDaRota() {
   const { id = "" } = useParams();
   const { data: a } = useSuspenseQuery(
     consultaAtendimento(id));
-  const { data: prescricoes } =
-    useSuspenseQuery(consultaPrescricoes(id));
+  const lerRx = usePode("rx:read");
+  const rx = useQuery({
+    ...consultaPrescricoes(id),
+    enabled: lerRx });
+  const prescricoes = lerRx
+    ? rx.data ?? [] : null;
   const paciente = useQuery(
     consultaPaciente(a.pacienteId)).data;
   const exibir = useExibirNome();
@@ -55,7 +59,7 @@ export function FichaDaRota() {
       {podePrescrever && (
         // nova key depois do 201: form limpo
         <FormPrescricao
-          key={prescricoes.length}
+          key={prescricoes?.length}
           enviando={prescrever.isPending}
           onPrescrever={(p) =>
             prescrever.mutate(p)} />

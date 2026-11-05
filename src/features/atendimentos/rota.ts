@@ -4,6 +4,8 @@ import { ErroHttp }
   from "../../api/cliente.ts";
 import { consultas }
   from "../../api/consultas.ts";
+import { consultaSessao }
+  from "../../api/sessao.ts";
 import {
   consultaAtendimento, consultaAtendimentos,
   consultaPrescricoes,
@@ -14,16 +16,22 @@ export const carregarPainel = () =>
     consultaAtendimentos);
 
 // Atendimento e prescrições em paralelo,
-// antes de a ficha aparecer.
+// antes de a ficha aparecer. Prescrição só
+// para quem tem rx:read: a recepção recebia
+// 403 e a ficha inteira caía (passo 09).
 export async function carregarAtendimento(
   { params }: LoaderFunctionArgs,
 ) {
   const id = params.id!;
+  const sessao = await consultas
+    .ensureQueryData(consultaSessao);
+  const lerRx = sessao?.permissoes
+    .includes("rx:read");
   try {
     await Promise.all([
       consultas.ensureQueryData(
         consultaAtendimento(id)),
-      consultas.ensureQueryData(
+      lerRx && consultas.ensureQueryData(
         consultaPrescricoes(id)),
     ]);
   } catch (e) {
