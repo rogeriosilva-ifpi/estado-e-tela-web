@@ -53,7 +53,8 @@ test("resposta velha não sobrescreve a nova",
       ma: ["Maria Souza", "João Lima"],
       mar: ["Maria Souza"],
     });
-    render(<BuscaProntuario />);
+    render(
+      <BuscaProntuario discreto={false} />);
     const campo = screen.getByLabelText(
       "Buscar no prontuário");
     await userEvent.type(campo, "ma");
@@ -79,7 +80,8 @@ test("sem login, avisa em vez de quebrar",
       Response.json(
         { error: "Não autenticado." },
         { status: 401 })));
-    render(<BuscaProntuario />);
+    render(
+      <BuscaProntuario discreto={false} />);
     const campo = screen.getByLabelText(
       "Buscar no prontuário");
     await userEvent.type(campo, "ma");

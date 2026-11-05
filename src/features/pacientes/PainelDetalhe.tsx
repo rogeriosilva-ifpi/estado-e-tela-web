@@ -1,12 +1,15 @@
+import { iniciais }
+  from "../../compartilhado/nome.ts";
 import { SeloRisco } from "./SeloRisco.tsx";
 import type { Paciente } from "./tipos.ts";
 
 interface Props {
   paciente?: Paciente;
+  discreto: boolean;
 }
 
 export function PainelDetalhe(
-  { paciente }: Props,
+  { paciente, discreto }: Props,
 ) {
   if (!paciente) {
     return <p>Selecione um paciente.</p>;
@@ -14,7 +17,9 @@ export function PainelDetalhe(
   return (
     <dl>
       <dt>Paciente</dt>
-      <dd>{paciente.nome}</dd>
+      <dd>{discreto
+        ? iniciais(paciente.nome)
+        : paciente.nome}</dd>
       <dt>Leito</dt>
       <dd>{paciente.leito}</dd>
       <dt>Risco</dt>

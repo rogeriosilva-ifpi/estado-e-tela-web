@@ -1,29 +1,34 @@
 import css from "./CartaoPaciente.module.css";
 import { Botao }
   from "../../compartilhado/Botao.tsx";
+import { iniciais }
+  from "../../compartilhado/nome.ts";
 import { SeloRisco } from "./SeloRisco.tsx";
 import type { Paciente } from "./tipos.ts";
 
 interface Props {
   paciente: Paciente;
   selecionado: boolean;
+  discreto: boolean;
   onSelecionar: (id: string) => void;
   onPrioridade: (id: string) => void;
   onAlta: (id: string) => void;
 }
 
 export function CartaoPaciente({
-  paciente, selecionado,
+  paciente, selecionado, discreto,
   onSelecionar, onPrioridade, onAlta,
 }: Props) {
   const { id, nome, leito, risco } = paciente;
   const atual = selecionado || undefined;
+  const exibido = discreto
+    ? iniciais(nome) : nome;
   return (
     <li className={css.cartao}
       aria-current={atual}>
       <Botao variante="texto"
         onClick={() => onSelecionar(id)}>
-        {nome}
+        {exibido}
       </Botao>
       <span className={css.leito}>
         leito {leito}</span>
@@ -32,7 +37,7 @@ export function CartaoPaciente({
         <span aria-label="prioridade">★</span>
       )}
       <input
-        aria-label={`Anotação de ${nome}`}
+        aria-label={`Anotação de ${exibido}`}
         placeholder="anotação"
       />
       <Botao variante="secundaria"
