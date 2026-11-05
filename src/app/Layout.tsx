@@ -64,6 +64,8 @@ export function Layout() {
               Prontuário</NavLink>
             <NavLink to="/admissao">
               Admissão</NavLink>
+            <NavLink to="/atendimentos">
+              Atendimentos</NavLink>
             {!usuario && (
               <NavLink to="/entrar">
                 Entrar</NavLink>)}

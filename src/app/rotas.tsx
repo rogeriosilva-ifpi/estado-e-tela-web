@@ -2,6 +2,13 @@ import type { RouteObject }
   from "react-router";
 import { FormLogin }
   from "../features/acesso/FormLogin.tsx";
+import { FichaDaRota }
+  from "../features/atendimentos/Ficha.tsx";
+import { PainelAtendimentos }
+  from "../features/atendimentos/Painel.tsx";
+import {
+  carregarAtendimento, carregarPainel,
+} from "../features/atendimentos/rota.ts";
 import { Ala }
   from "../features/pacientes/Ala.tsx";
 import { BuscaProntuario }
@@ -51,6 +58,15 @@ export const rotas: RouteObject[] = [{
         { path: "admissao",
           handle: { titulo: "Admissão" },
           lazy: admissao },
+        { path: "atendimentos",
+          handle: { titulo: "Atendimentos" },
+          loader: carregarPainel,
+          Component: PainelAtendimentos },
+        { path: "atendimentos/:id",
+          handle: { titulo: "Atendimento" },
+          loader: carregarAtendimento,
+          ErrorBoundary: ErroDeRota,
+          Component: FichaDaRota },
       ] },
       { path: "entrar",
         handle: { titulo: "Entrar" },
