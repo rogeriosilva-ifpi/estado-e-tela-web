@@ -10,6 +10,9 @@ laboratório do ebook *Estado & Tela*.
   testes e build; precisa passar antes
   de toda entrega
 - `npm run fronteiras`: quem importa quem
+- `npm run e2e`: jornada no Playwright;
+  precisa da API em :3000
+- `npm run gate:completo`: portão e E2E
 - A API roda à parte (`estado-e-tela-api`,
   `npm start`, porta 3000)
 

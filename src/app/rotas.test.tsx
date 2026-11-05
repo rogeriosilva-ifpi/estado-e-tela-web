@@ -4,7 +4,7 @@ import {
 import userEvent
   from "@testing-library/user-event";
 import {
-  afterEach, beforeEach, expect, test, vi,
+  afterEach, beforeEach, expect, test,
 } from "vitest";
 import { consultas }
   from "../api/consultas.ts";
@@ -14,10 +14,7 @@ import { abrir } from "../teste/rota.tsx";
 
 // por padrão, a Dra. Ana entrou
 beforeEach(() => apiFalsa(SEMENTE));
-afterEach(() => {
-  cleanup();
-  vi.unstubAllGlobals();
-});
+afterEach(cleanup);
 
 test("modo discreto não mostra nome inteiro",
   async () => {
@@ -184,3 +181,24 @@ test("sair esquece tudo o que a tela viu",
     expect(screen.queryByRole("button",
       { name: "Sair" })).toBeNull();
   });
+
+// ---- capítulo 16: a rede de verdade ----
+
+test("Próxima mostra a página 2",
+async () => {
+  const sete = Array.from({ length: 7 },
+    (_, i) => ({ id: `x${i + 1}`,
+      nome: `Paciente ${i + 1}`,
+      cns: String(i), nascimento: "" }));
+  apiFalsa(sete);
+  abrir("/pacientes?q=paciente");
+  const links = async () => within(
+    await lista()).findAllByRole("link");
+  expect(await links()).toHaveLength(5);
+  await userEvent.click(await screen
+    .findByRole("button",
+      { name: "Próxima" }));
+  expect(await screen.findByRole("link",
+    { name: "Paciente 6" })).toBeTruthy();
+  expect(await links()).toHaveLength(2);
+});

@@ -54,6 +54,8 @@ npm run gate       # tipos, lint, fronteiras, testes e build
 | `cap14` | TanStack Query: cache, edição otimista com reversão, invalidação; `docs/API.md` |
 | `cap15-antes` | login guardado em `localStorage`, guarda em componente, Inativar escondido pelo papel (API `cap14`) |
 | `cap15` | sessão de `/api/auth/me` no cache, middleware `exigirSessao`, 401 leva ao login e volta, `usePode` (API `cap15`) |
+| `cap16-antes` | parâmetros da busca em inglês e teste de paginação com `vi.mock` do hook: verde, e a página 2 mostra a página 1 |
+| `cap16` | MSW na fronteira, jornada E2E no Playwright, React Compiler ligado; UI-24 e UI-25 |
 
 Todos os pacientes são fictícios.
 

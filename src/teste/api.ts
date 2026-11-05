@@ -1,8 +1,9 @@
-import { vi } from "vitest";
+import { http, HttpResponse } from "msw/http";
 import type { Paciente }
   from "../api/pacientes.ts";
 import type { Usuario }
   from "../api/sessao.ts";
+import { rede } from "./rede.ts";
 
 type Opcoes = {
   // quem /api/auth/me diz que entrou
@@ -11,9 +12,13 @@ type Opcoes = {
   recusar?: Record<string, number>;
 };
 
-// API falsa com estado, no formato das tags
-// cap14 e cap15 da API: sessão, busca
-// paginada, detalhe, edição e inativação.
+const json = HttpResponse.json;
+const nada = () => json({}, { status: 404 });
+
+// A API falsa: as rotas da tag cap15 da API,
+// descritas no MSW, com um banco em memória.
+// A tela faz fetch de verdade; nada dentro
+// dela é trocado.
 export function apiFalsa(
   semente: Paciente[],
   { usuario = ANA, recusar = {} }:
@@ -23,59 +28,76 @@ export function apiFalsa(
   const pedidos: string[] = [];
   let aberta = usuario !== null;
   const quem = usuario ?? ANA;
-  const json = (c: unknown, status = 200) =>
-    Response.json(c, { status });
-  vi.stubGlobal("fetch", vi.fn(async (
-    url: string, o: RequestInit = {},
-  ) => {
-    const u = new URL(url, "http://x");
-    const metodo = o.method ?? "GET";
-    const pedido = `${metodo} ${u.pathname}`;
-    pedidos.push(pedido);
-    if (recusar[pedido]) {
-      return json({ error: "recusado" },
-        recusar[pedido]);
-    }
-    if (pedido === "POST /api/auth/login") {
-      aberta = true;
-      return json({ usuario: quem });
-    }
-    if (!aberta) {
-      return json(
-        { error: "Não autenticado." }, 401);
-    }
-    if (u.pathname === "/api/auth/me") {
-      return json({ usuario: quem });
-    }
-    if (u.pathname === "/api/auth/logout") {
-      return new Response(null,
-        { status: 204 });
-    }
-    const [, , , id, acao] =
-      u.pathname.split("/");
-    const p = db.find((x) => x.id === id);
-    if (metodo === "GET" && !id) {
-      const q = u.searchParams.get("q") ?? "";
-      const pag = Number(
-        u.searchParams.get("pagina") ?? 1);
-      const por = Number(u.searchParams
-        .get("porPagina") ?? 10);
-      const achados = db.filter((x) =>
-        x.ativo !== false && x.nome
-          .toLowerCase().includes(q));
-      return json({ total: achados.length,
-        pagina: pag, porPagina: por,
-        itens: achados.slice((pag - 1) * por,
-          pag * por) });
-    }
-    if (!p) return json({}, 404);
-    if (metodo === "PATCH") {
-      Object.assign(p,
-        JSON.parse(String(o.body)));
-    }
-    if (acao === "inativar") p.ativo = false;
-    return json({ ...p });
-  }));
+  const achar = (id: unknown) =>
+    db.find((x) => x.id === id);
+
+  rede.use(
+    // passa por todos os pedidos primeiro:
+    // anota, recusa ou cai na rota abaixo
+    http.all("/api/*", ({ request }) => {
+      const u = new URL(request.url);
+      const pedido =
+        `${request.method} ${u.pathname}`;
+      pedidos.push(pedido);
+      if (recusar[pedido]) {
+        return json({ error: "recusado" },
+          { status: recusar[pedido] });
+      }
+      if (pedido === "POST /api/auth/login") {
+        aberta = true;
+        return json({ usuario: quem });
+      }
+      if (!aberta) {
+        return json({ error: "Sem sessão." },
+          { status: 401 });
+      }
+    }),
+    http.get("/api/auth/me",
+      () => json({ usuario: quem })),
+    http.post("/api/auth/logout",
+      () => new HttpResponse(null,
+        { status: 204 })),
+    // como a API: lê pagina e porPagina,
+    // ignora o que não conhece
+    http.get("/api/patients",
+      ({ request }) => {
+        const p = new URL(request.url)
+          .searchParams;
+        const q = p.get("q") ?? "";
+        const pag =
+          Number(p.get("pagina") ?? 1);
+        const por =
+          Number(p.get("porPagina") ?? 10);
+        const achados = db.filter((x) =>
+          x.ativo !== false && x.nome
+            .toLowerCase().includes(q));
+        return json({ total: achados.length,
+          pagina: pag, porPagina: por,
+          itens: achados.slice(
+            (pag - 1) * por, pag * por) });
+      }),
+    http.get("/api/patients/:id",
+      ({ params }) => {
+        const p = achar(params.id);
+        return p ? json(p) : nada();
+      }),
+    http.patch("/api/patients/:id",
+      async ({ params, request }) => {
+        const p = achar(params.id);
+        if (!p) return nada();
+        Object.assign(p,
+          await request.json());
+        return json(p);
+      }),
+    http.post("/api/patients/:id/inativar",
+      ({ params }) => {
+        const p = achar(params.id);
+        if (!p) return nada();
+        p.ativo = false;
+        return json(p);
+      }),
+  );
+
   // o servidor encerra a sessão (expirou,
   // "sair de todos os dispositivos")
   const encerrarSessao = () => {

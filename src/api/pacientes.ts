@@ -26,10 +26,11 @@ export function buscarPacientes(
   q: string, pagina: number,
   sinal?: AbortSignal,
 ) {
-  // nomes em inglês, como as rotas da API
+  // os nomes que a API lê (docs/API.md); a
+  // API ignora parâmetro que não conhece
   const p = new URLSearchParams({ q,
-    page: String(pagina),
-    perPage: String(POR_PAGINA) });
+    pagina: String(pagina),
+    porPagina: String(POR_PAGINA) });
   // ?atraso= do laboratório, se houver
   const atraso = new URLSearchParams(
     location.search).get("atraso");

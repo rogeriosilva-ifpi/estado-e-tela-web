@@ -112,3 +112,16 @@ catálogo só no terceiro uso real.
 - Um trecho com nome próprio na conversa do usuário ("o resumo").
 - Um trecho repetido pela terceira vez. Na segunda, copie e espere.
 - Nunca para "deixar genérico" antes de existir o segundo uso real.
+
+## Testes e desempenho
+
+- Teste de componente lê a tela como o usuário: `getByRole`,
+  `getByLabelText`, `userEvent`. Nada de classe CSS, estado interno ou
+  `container.querySelector`.
+- A rede é simulada no MSW (`apiFalsa` em `src/teste/api.ts`), nunca com
+  `vi.mock` de hook ou serviço.
+- Reducer e função pura: teste de unidade, sem tela.
+- O caminho inteiro (entrar, buscar, editar, sair): `e2e/`, no Playwright,
+  com a API rodando.
+- O React Compiler memoiza. `useMemo`/`useCallback` só com número do
+  Renderômetro que justifique.
