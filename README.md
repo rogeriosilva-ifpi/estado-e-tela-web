@@ -10,7 +10,7 @@ Primeiro a API, num terminal:
 ```bash
 git clone https://github.com/rogeriosilva-ifpi/estado-e-tela-api
 cd estado-e-tela-api && npm install
-git checkout cap07 && npm start      # :3000 (cap07 serve até o cap. 10)
+git checkout cap12 && npm start      # :3000 (cap07 até o cap. 11; cap12 no 12)
 ```
 
 Depois a tela, em outro:
@@ -44,6 +44,10 @@ npm run gate       # tipos, lint, fronteiras, testes e build
 | `cap09-tailwind` | a mesma tela em Tailwind 4.3, para comparar (fora da linha principal) |
 | `cap10-antes` | confirmação de alta numa `div` sobreposta |
 | `cap10` | catálogo: `Botao`, `Aviso`, `Modal` com `<dialog>`; lint proíbe `<button>` cru |
+| `cap11-antes` | modo discreto e tema descem por props; o diálogo de alta vaza o nome |
+| `cap11` | `compartilhado/exibicao/`: três contextos e provedor que recebe `children` |
+| `cap12-antes` | assistente de admissão em três passos com seis `useState` |
+| `cap12` | `useReducer` com estado por fase; reducer testado sem tela (API `cap12`) |
 
 Todos os pacientes são fictícios.
 
