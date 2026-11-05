@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { BarraBusca }
@@ -33,7 +34,10 @@ export function BuscaProntuario() {
       )}
       <ul aria-label="Resultados">
         {achados.map((a) => (
-          <li key={a.id}>{exibir(a.nome)}</li>
+          <li key={a.id}>
+            <Link to={`/pacientes/${a.id}`}>
+              {exibir(a.nome)}</Link>
+          </li>
         ))}
       </ul>
     </>

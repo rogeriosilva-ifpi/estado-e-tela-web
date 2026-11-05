@@ -1,0 +1,14 @@
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-3);
+  margin-bottom: var(--espaco-4);
+}
+.menu a {
+  color: var(--acao);
+}
+.menu a[aria-current="page"] {
+  color: var(--texto);
+  font-weight: 700;
+  text-decoration: none;
+}

@@ -6,8 +6,9 @@ import userEvent
 import {
   afterEach, expect, test, vi,
 } from "vitest";
+import { MemoryRouter } from "react-router";
 import { BuscaProntuario }
-  from "./BuscaProntuario.tsx";
+  from "./Busca.tsx";
 
 afterEach(() => {
   cleanup();
@@ -53,7 +54,8 @@ test("resposta velha não sobrescreve a nova",
       ma: ["Maria Souza", "João Lima"],
       mar: ["Maria Souza"],
     });
-    render(<BuscaProntuario />);
+    render(<MemoryRouter>
+      <BuscaProntuario /></MemoryRouter>);
     const campo = screen.getByLabelText(
       "Buscar no prontuário");
     await userEvent.type(campo, "ma");
@@ -79,7 +81,8 @@ test("sem login, avisa em vez de quebrar",
       Response.json(
         { error: "Não autenticado." },
         { status: 401 })));
-    render(<BuscaProntuario />);
+    render(<MemoryRouter>
+      <BuscaProntuario /></MemoryRouter>);
     const campo = screen.getByLabelText(
       "Buscar no prontuário");
     await userEvent.type(campo, "ma");
