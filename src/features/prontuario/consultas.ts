@@ -1,34 +1,20 @@
 import {
-  keepPreviousData, queryOptions,
-  useMutation, useQuery, useQueryClient,
+  keepPreviousData, useMutation, useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { ErroHttp }
   from "../../api/cliente.ts";
 import {
-  buscarPacientes, editarPaciente,
+  buscarPacientes, chavesPacientes,
+  consultaPaciente, editarPaciente,
   type Edicao, inativarPaciente,
-  obterPaciente,
 } from "../../api/pacientes.ts";
 
-// Chaves em árvore: invalidar ["pacientes"]
-// alcança todas as buscas e os detalhes.
-export const chaves = {
-  todos: ["pacientes"] as const,
-  busca: (q: string, p: number) =>
-    ["pacientes", "busca", q, p] as const,
-  um: (id: string) =>
-    ["pacientes", "um", id] as const,
-};
-
-// A mesma receita serve ao loader da rota e
-// ao componente: um pedido, um lugar no
-// cache.
-export const consultaPaciente =
-  (id: string) => queryOptions({
-    queryKey: chaves.um(id),
-    queryFn: ({ signal }) =>
-      obterPaciente(id, signal),
-  });
+// Chaves e consulta do paciente moram em
+// api/: a feature de atendimentos também
+// lê paciente.
+const chaves = chavesPacientes;
+export { consultaPaciente };
 
 // Erro esperado vira aviso; o resto sobe ao
 // LimiteDeErro do painel (UI-10). O 401 não

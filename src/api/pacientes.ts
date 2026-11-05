@@ -1,3 +1,5 @@
+import { queryOptions }
+  from "@tanstack/react-query";
 import { pedir } from "./cliente.ts";
 
 // O contrato da API de pacientes, do lado
@@ -59,3 +61,25 @@ export function inativarPaciente(id: string) {
     `/api/patients/${id}/inativar`,
     { metodo: "POST" });
 }
+
+// Chaves em árvore: invalidar ["pacientes"]
+// alcança todas as buscas e os detalhes.
+// Moram aqui porque mais de uma feature lê
+// paciente (prontuário e atendimentos).
+export const chavesPacientes = {
+  todos: ["pacientes"] as const,
+  busca: (q: string, p: number) =>
+    ["pacientes", "busca", q, p] as const,
+  um: (id: string) =>
+    ["pacientes", "um", id] as const,
+};
+
+// A mesma receita serve ao loader da rota e
+// ao componente: um pedido, um lugar no
+// cache.
+export const consultaPaciente =
+  (id: string) => queryOptions({
+    queryKey: chavesPacientes.um(id),
+    queryFn: ({ signal }) =>
+      obterPaciente(id, signal),
+  });
