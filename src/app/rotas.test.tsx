@@ -6,6 +6,8 @@ import userEvent
 import {
   afterEach, expect, test, vi,
 } from "vitest";
+import { apiFalsa, SEMENTE }
+  from "../teste/api.ts";
 import { abrir } from "../teste/rota.tsx";
 
 afterEach(() => {
@@ -45,8 +47,7 @@ test("modo discreto não mostra nome inteiro",
   });
 
 test("a busca mora na URL", async () => {
-  api({ "/api/patients": [200,
-    [{ id: "p1", nome: "Maria Souza" }]] });
+  apiFalsa(SEMENTE);
   abrir("/pacientes?q=ma");
   const campo = screen.getByLabelText(
     "Buscar no prontuário");
@@ -55,7 +56,7 @@ test("a busca mora na URL", async () => {
   const link = await screen.findByRole("link",
     { name: "Maria Souza" });
   expect(link.getAttribute("href"))
-    .toBe("/pacientes/p1");
+    .toBe("/pacientes/p1?q=ma");
 });
 
 test("paciente que não existe", async () => {
@@ -85,4 +86,43 @@ test("sem login, o detalhe leva ao login",
       "E-mail")).toBeTruthy();
     expect(router.state.location.search)
       .toBe("?volta=%2Fpacientes%2Fp1");
+  });
+
+const lista = () => screen.getByRole("list",
+  { name: "Resultados" });
+const aberto = () => screen.getByRole(
+  "article", { name: "Paciente aberto" });
+const abrirPaciente = async (nome: string) =>
+  userEvent.click(await within(lista())
+    .findByRole("link", { name: nome }));
+
+test("a lista mostra o nome editado",
+  async () => {
+    apiFalsa(SEMENTE);
+    abrir("/pacientes?q=jo");
+    await abrirPaciente("João Lima");
+    const nome = await within(await screen
+      .findByRole("article")).findByLabelText(
+      "Nome");
+    await userEvent.clear(nome);
+    await userEvent.type(nome,
+      "João Lima Neto");
+    await userEvent.click(within(aberto())
+      .getByRole("button",
+        { name: "Salvar" }));
+    expect(await within(lista()).findByRole(
+      "link", { name: "João Lima Neto" }))
+      .toBeTruthy();
+  });
+
+test("trocar de paciente troca o detalhe",
+  async () => {
+    apiFalsa(SEMENTE);
+    abrir("/pacientes?q=a");
+    await abrirPaciente("Maria Souza");
+    await screen.findByText(
+      "898001234567890");
+    await abrirPaciente("João Lima");
+    expect(await screen.findByText(
+      "898009876543210")).toBeTruthy();
   });

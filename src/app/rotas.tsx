@@ -34,11 +34,14 @@ export const rotas: RouteObject[] = [{
       { index: true, Component: Ala },
       { path: "pacientes",
         handle: { titulo: "Prontuário" },
-        Component: BuscaProntuario },
-      { path: "pacientes/:id",
-        handle: { titulo: "Paciente" },
-        loader: carregarPaciente,
-        Component: DetalhePaciente },
+        Component: BuscaProntuario,
+        // mestre-detalhe: a lista continua
+        // montada com o paciente aberto
+        children: [{
+          path: ":id",
+          loader: carregarPaciente,
+          ErrorBoundary: ErroDeRota,
+          Component: DetalhePaciente }] },
       { path: "admissao",
         handle: { titulo: "Admissão" },
         lazy: admissao },

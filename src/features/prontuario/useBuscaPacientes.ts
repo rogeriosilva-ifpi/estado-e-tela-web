@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { ErroHttp, pedir }
+import { ErroHttp }
   from "../../api/cliente.ts";
+import { buscarPacientes, type Paciente }
+  from "../../api/pacientes.ts";
 
-export interface Achado {
-  id: string;
-  nome: string;
-}
 interface Busca {
-  achados: Achado[];
+  achados: Paciente[];
+  total: number;
   aviso?: string;
   falha?: unknown;
 }
@@ -17,10 +16,11 @@ const AVISO: Record<number, string> = {
   401: "Entre para buscar no prontuário.",
   403: "Seu papel não pode buscar.",
 };
-const VAZIA: Busca = { achados: [] };
+const VAZIA: Busca =
+  { achados: [], total: 0 };
 
 export function useBuscaPacientes(
-  termo: string,
+  termo: string, pagina: number,
 ) {
   const [busca, setBusca] =
     useState<Busca>(VAZIA);
@@ -28,27 +28,20 @@ export function useBuscaPacientes(
   useEffect(() => {
     if (!termo) return;
     const ctrl = new AbortController();
-    // repassa só o ?atraso= do laboratório:
-    // o q da página já é o termo
-    const atraso = new URLSearchParams(
-      location.search).get("atraso");
-    const url = "/api/patients?q="
-      + encodeURIComponent(termo)
-      + (atraso ? `&atraso=${atraso}` : "");
     const sinal = ctrl.signal;
-    pedir<Achado[]>(url, { sinal })
-      .then((achados) =>
-        setBusca({ achados }))
+    buscarPacientes(termo, pagina, sinal)
+      .then((r) => setBusca(
+        { achados: r.itens, total: r.total }))
       .catch((e: unknown) => {
         if (sinal.aborted) return;
         const aviso = e instanceof ErroHttp
           ? AVISO[e.status] : undefined;
         setBusca(aviso
-          ? { achados: [], aviso }
-          : { achados: [], falha: e });
+          ? { ...VAZIA, aviso }
+          : { ...VAZIA, falha: e });
       });
     return () => ctrl.abort();
-  }, [termo]);
+  }, [termo, pagina]);
 
   if (!termo) return VAZIA;
   // Inesperado sobe para o LimiteDeErro.

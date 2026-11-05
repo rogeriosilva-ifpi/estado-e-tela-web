@@ -33,8 +33,10 @@ function redeControlada(
       o?.signal?.addEventListener("abort",
         () => falha(new DOMException(
           "abortado", "AbortError")));
-      const corpo = (dados[q] ?? []).map(
+      const itens = (dados[q] ?? []).map(
         (nome, i) => ({ id: q + i, nome }));
+      const corpo = { itens,
+        total: itens.length };
       fila.push({ url, responder: () =>
         ok(Response.json(corpo)) });
     }));

@@ -3,7 +3,8 @@ import {
 } from "react-router";
 import { ErroHttp, pedir }
   from "../../api/cliente.ts";
-import type { PacienteApi } from "./tipos.ts";
+import type { Paciente }
+  from "../../api/pacientes.ts";
 
 // Carrega o paciente antes de a página
 // aparecer: a rota só renderiza com o dado.
@@ -11,7 +12,7 @@ export async function carregarPaciente(
   { params, request }: LoaderFunctionArgs,
 ) {
   try {
-    return await pedir<PacienteApi>(
+    return await pedir<Paciente>(
       `/api/patients/${params.id}`,
       { sinal: request.signal });
   } catch (e) {
