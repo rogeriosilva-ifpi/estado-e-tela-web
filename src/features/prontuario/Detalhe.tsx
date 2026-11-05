@@ -15,10 +15,10 @@ import { Modal }
   from "../../compartilhado/Modal.tsx";
 import { useExibirNome } from
   "../../compartilhado/exibicao/contextos.ts";
-import { usuarioAtual }
+import { usePode }
   from "../../compartilhado/sessao.ts";
 import {
-  consultaPaciente, useEditarPaciente,
+  consultaPaciente, negado, useEditarPaciente,
   useInativarPaciente,
 } from "./consultas.ts";
 
@@ -33,9 +33,10 @@ export function DetalhePaciente() {
   const [confirmar, setConfirmar] =
     useState(false);
   const exibir = useExibirNome();
-  // recepção não inativa
-  const recepcao =
-    usuarioAtual()?.papel === "recepcao";
+  // a API diz o que este papel pode; a
+  // mesma API recusa (403) quem tentar
+  const podeInativar =
+    usePode("patient:deactivate");
 
   function salvar(
     e: FormEvent<HTMLFormElement>,
@@ -75,11 +76,17 @@ export function DetalhePaciente() {
           Não foi salvo; o nome voltou ao
           anterior.</Aviso>
       )}
-      {!recepcao && (
+      {podeInativar && (
         <Botao variante="perigo"
           disabled={p.ativo === false}
           onClick={() => setConfirmar(true)}>
           Inativar</Botao>)}
+      {inativar.isError && (
+        <Aviso tom="erro">
+          {negado(inativar.error)
+            ? "Seu papel não pode inativar."
+            : "Não foi inativado."}</Aviso>
+      )}
       <Modal aberto={confirmar}
         titulo={`Inativar ${exibir(p.nome)}?`}
         onFechar={() => setConfirmar(false)}>

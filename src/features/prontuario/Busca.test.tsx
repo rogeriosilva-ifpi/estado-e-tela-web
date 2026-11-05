@@ -98,18 +98,18 @@ test("resposta velha não sobrescreve a nova",
       .toBeTruthy();
   });
 
-test("sem login, avisa em vez de quebrar",
+test("sem permissão, avisa em vez de quebrar",
   async () => {
     vi.stubGlobal("fetch", vi.fn(async () =>
       Response.json(
-        { error: "Não autenticado." },
-        { status: 401 })));
+        { error: "Permissão insuficiente." },
+        { status: 403 })));
     render(<Provedores>
       <BuscaProntuario /></Provedores>);
     const campo = screen.getByLabelText(
       "Buscar no prontuário");
     await userEvent.type(campo, "ma");
     expect(await screen.findByText(
-      "Entre para buscar no prontuário."))
+      "Seu papel não pode buscar."))
       .toBeTruthy();
   });

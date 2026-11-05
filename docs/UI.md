@@ -63,6 +63,16 @@ catálogo só no terceiro uso real.
 - Rota pesada que pouca gente abre usa `lazy` com `import()` de caminho
   literal (o Vite só divide o código com string literal).
 
+## Sessão e permissão
+
+- Quem entrou vem de `/api/auth/me` e mora no cache (`["sessao"]`).
+  Leia com `useSessao()`; nunca guarde no navegador.
+- Rota que exige login fica sob a rota sem caminho com
+  `middleware: [exigirSessao]` e `handle: { protegida: true }`.
+- Botão que um papel não pode usar: `usePode("permissao")`, nunca
+  `papel === "..."`. Esconder é cortesia; a API recusa com 403.
+- 401 leva ao login com `?volta=`; 403 avisa no lugar.
+
 ## Estado compartilhado
 
 - Primeiro tente composição (passar `children`) e props. Contexto é para

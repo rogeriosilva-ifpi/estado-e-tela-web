@@ -31,13 +31,18 @@ export const consultaPaciente =
   });
 
 // Erro esperado vira aviso; o resto sobe ao
-// LimiteDeErro do painel (UI-10).
+// LimiteDeErro do painel (UI-10). O 401 não
+// chega aqui como aviso: leva ao login.
 export const AVISO: Record<number, string> = {
-  401: "Entre para buscar no prontuário.",
+  401: "Sua sessão terminou.",
   403: "Seu papel não pode buscar.",
 };
 const esperado = (e: Error) =>
   e instanceof ErroHttp && e.status in AVISO;
+// 403: sem permissão. Avisa ali mesmo; não
+// é caso de login (UI-21).
+export const negado = (e: Error | null) =>
+  e instanceof ErroHttp && e.status === 403;
 
 export function useBusca(
   q: string, pagina: number,

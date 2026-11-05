@@ -1,15 +1,28 @@
 import { vi } from "vitest";
 import type { Paciente }
   from "../api/pacientes.ts";
+import type { Usuario }
+  from "../api/sessao.ts";
 
-// API falsa com estado, no formato da tag
-// cap14 da API: busca paginada, detalhe,
-// edição e inativação.
+type Opcoes = {
+  // quem /api/auth/me diz que entrou
+  usuario?: Usuario | null;
+  // "METODO /caminho" → status de recusa
+  recusar?: Record<string, number>;
+};
+
+// API falsa com estado, no formato das tags
+// cap14 e cap15 da API: sessão, busca
+// paginada, detalhe, edição e inativação.
 export function apiFalsa(
   semente: Paciente[],
+  { usuario = ANA, recusar = {} }:
+    Opcoes = {},
 ) {
   const db = semente.map((p) => ({ ...p }));
   const pedidos: string[] = [];
+  let aberta = usuario !== null;
+  const quem = usuario ?? ANA;
   const json = (c: unknown, status = 200) =>
     Response.json(c, { status });
   vi.stubGlobal("fetch", vi.fn(async (
@@ -17,7 +30,27 @@ export function apiFalsa(
   ) => {
     const u = new URL(url, "http://x");
     const metodo = o.method ?? "GET";
-    pedidos.push(`${metodo} ${u.pathname}`);
+    const pedido = `${metodo} ${u.pathname}`;
+    pedidos.push(pedido);
+    if (recusar[pedido]) {
+      return json({ error: "recusado" },
+        recusar[pedido]);
+    }
+    if (pedido === "POST /api/auth/login") {
+      aberta = true;
+      return json({ usuario: quem });
+    }
+    if (!aberta) {
+      return json(
+        { error: "Não autenticado." }, 401);
+    }
+    if (u.pathname === "/api/auth/me") {
+      return json({ usuario: quem });
+    }
+    if (u.pathname === "/api/auth/logout") {
+      return new Response(null,
+        { status: 204 });
+    }
     const [, , , id, acao] =
       u.pathname.split("/");
     const p = db.find((x) => x.id === id);
@@ -43,7 +76,12 @@ export function apiFalsa(
     if (acao === "inativar") p.ativo = false;
     return json({ ...p });
   }));
-  return { db, pedidos };
+  // o servidor encerra a sessão (expirou,
+  // "sair de todos os dispositivos")
+  const encerrarSessao = () => {
+    aberta = false;
+  };
+  return { db, pedidos, encerrarSessao };
 }
 
 export const SEMENTE: Paciente[] = [
@@ -54,3 +92,14 @@ export const SEMENTE: Paciente[] = [
     cns: "898009876543210",
     nascimento: "1990-11-02" },
 ];
+
+// Os dois papéis da tag cap15 da API.
+const LER = ["patient:read", "patient:create",
+  "patient:update"];
+export const ANA: Usuario = { id: "u2",
+  nome: "Dra. Ana", papel: "profissional",
+  permissoes:
+    [...LER, "patient:deactivate"] };
+export const CARLA: Usuario = { id: "u4",
+  nome: "Carla", papel: "recepcao",
+  permissoes: LER };

@@ -52,6 +52,8 @@ npm run gate       # tipos, lint, fronteiras, testes e build
 | `cap13` | React Router 8 (modo de dados): busca na URL, loader, erros no layout, admissão sob demanda |
 | `cap14-antes` | mestre-detalhe paginado; detalhe copiado para `useState` (API `cap14`) |
 | `cap14` | TanStack Query: cache, edição otimista com reversão, invalidação; `docs/API.md` |
+| `cap15-antes` | login guardado em `localStorage`, guarda em componente, Inativar escondido pelo papel (API `cap14`) |
+| `cap15` | sessão de `/api/auth/me` no cache, middleware `exigirSessao`, 401 leva ao login e volta, `usePode` (API `cap15`) |
 
 Todos os pacientes são fictícios.
 

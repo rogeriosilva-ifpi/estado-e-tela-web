@@ -37,7 +37,8 @@
           }
         ]
       }
-    ]
+    ],
+    "react/no-danger": "error"
   },
   "overrides": [
     {

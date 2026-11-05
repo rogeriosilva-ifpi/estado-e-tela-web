@@ -14,7 +14,7 @@ import { ErroDeRota } from "./ErroDeRota.tsx";
 import { Layout } from "./Layout.tsx";
 import { NaoEncontrada }
   from "./NaoEncontrada.tsx";
-import { Protegida } from "./Protegida.tsx";
+import { exigirSessao } from "./protecao.ts";
 
 // Baixa o código da admissão (e o Zod) só
 // quando alguém abre a rota.
@@ -33,8 +33,11 @@ export const rotas: RouteObject[] = [{
     ErrorBoundary: ErroDeRota,
     children: [
       { index: true, Component: Ala },
-      // só para quem entrou
-      { Component: Protegida, children: [
+      // só para quem entrou: o middleware
+      // decide antes de qualquer loader
+      { middleware: [exigirSessao],
+        handle: { protegida: true },
+        children: [
         { path: "pacientes",
           handle: { titulo: "Prontuário" },
           Component: BuscaProntuario,

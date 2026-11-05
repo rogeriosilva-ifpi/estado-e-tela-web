@@ -1,22 +1,17 @@
-// Quem entrou fica guardado no navegador,
-// para a tela continuar logada depois de
-// recarregar.
-export interface Usuario {
-  nome: string;
-  papel: string;
+import { useQuery }
+  from "@tanstack/react-query";
+import { consultaSessao }
+  from "../api/sessao.ts";
+
+// undefined: ainda perguntando ao servidor.
+// null: ninguém entrou.
+export function useSessao() {
+  return useQuery(consultaSessao).data;
 }
 
-const CHAVE = "usuario";
-
-export function usuarioAtual():
-  Usuario | null {
-  const s = localStorage.getItem(CHAVE);
-  return s ? JSON.parse(s) : null;
+// Esconder um botão é cortesia com quem não
+// pode usá-lo. Quem proíbe é a API (403).
+export function usePode(permissao: string) {
+  return useSessao()?.permissoes
+    .includes(permissao) ?? false;
 }
-
-export const lembrar = (u: Usuario) =>
-  localStorage.setItem(CHAVE,
-    JSON.stringify(u));
-
-export const esquecer = () =>
-  localStorage.removeItem(CHAVE);

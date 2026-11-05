@@ -1,25 +1,22 @@
+import { useQueryClient }
+  from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useSearchParams }
   from "react-router";
 import type { FormEvent } from "react";
-import { ErroHttp, pedir }
+import { ErroHttp }
   from "../../api/cliente.ts";
+import { entrar } from "../../api/sessao.ts";
 import { Aviso }
   from "../../compartilhado/Aviso.tsx";
 import { Botao }
   from "../../compartilhado/Botao.tsx";
-import { lembrar, type Usuario }
-  from "../../compartilhado/sessao.ts";
 
 type Estado =
   | { tipo: "ocioso" }
   | { tipo: "enviando" }
-  | { tipo: "erro"; msg: string }
-  | { tipo: "ok"; nome: string };
-type Sessao = { usuario: Usuario };
+  | { tipo: "erro"; msg: string };
 
-// Formulário controlado: cada tecla passa
-// pelo estado do React.
 // Só caminhos internos: "?volta=//site.com"
 // não pode levar ninguém para fora.
 function destino(volta: string | null) {
@@ -27,26 +24,27 @@ function destino(volta: string | null) {
     && !volta.startsWith("//") ? volta : "/";
 }
 
+// Formulário controlado: cada tecla passa
+// pelo estado do React.
 export function FormLogin() {
   const navegar = useNavigate();
   const [params] = useSearchParams();
+  const cache = useQueryClient();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [estado, setEstado] =
     useState<Estado>({ tipo: "ocioso" });
 
-  async function entrar(
+  async function enviar(
     e: FormEvent<HTMLFormElement>,
   ) {
     e.preventDefault();
     setEstado({ tipo: "enviando" });
     try {
-      const { usuario } = await pedir<Sessao>(
-        "/api/auth/login", { metodo: "POST",
-          corpo: { email, senha } });
-      lembrar(usuario);
-      setEstado(
-        { tipo: "ok", nome: usuario.nome });
+      await entrar(email, senha);
+      // começa do zero: a próxima pergunta
+      // "quem entrou?" vai ao servidor
+      cache.clear();
       navegar(destino(params.get("volta")),
         { replace: true });
     } catch (erro) {
@@ -58,11 +56,8 @@ export function FormLogin() {
     }
   }
 
-  if (estado.tipo === "ok") {
-    return <p>Entrou como {estado.nome}.</p>;
-  }
   return (
-    <form onSubmit={entrar}>
+    <form onSubmit={enviar}>
       <label>
         E-mail
         <input type="email" value={email}

@@ -6,32 +6,18 @@ import userEvent
 import {
   afterEach, beforeEach, expect, test, vi,
 } from "vitest";
-import { esquecer, lembrar }
-  from "../compartilhado/sessao.ts";
-import { apiFalsa, SEMENTE }
+import { consultas }
+  from "../api/consultas.ts";
+import { apiFalsa, CARLA, SEMENTE }
   from "../teste/api.ts";
 import { abrir } from "../teste/rota.tsx";
 
-beforeEach(() => lembrar(
-  { nome: "Dra. Ana", papel: "profissional" }));
+// por padrão, a Dra. Ana entrou
+beforeEach(() => apiFalsa(SEMENTE));
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  localStorage.clear();
 });
-
-// API falsa: responde pelo caminho pedido.
-function api(rotas: Record<string,
-  [number, unknown]>) {
-  vi.stubGlobal("fetch", vi.fn(
-    async (url: string) => {
-      const { pathname } =
-        new URL(url, "http://x");
-      const [status, corpo] =
-        rotas[pathname] ?? [404, {}];
-      return Response.json(corpo, { status });
-    }));
-}
 
 test("modo discreto não mostra nome inteiro",
   async () => {
@@ -52,9 +38,8 @@ test("modo discreto não mostra nome inteiro",
   });
 
 test("a busca mora na URL", async () => {
-  apiFalsa(SEMENTE);
   abrir("/pacientes?q=ma");
-  const campo = screen.getByLabelText(
+  const campo = await screen.findByLabelText(
     "Buscar no prontuário");
   expect((campo as HTMLInputElement).value)
     .toBe("ma");
@@ -65,7 +50,6 @@ test("a busca mora na URL", async () => {
 });
 
 test("paciente que não existe", async () => {
-  api({});
   abrir("/pacientes/p999");
   expect(await screen.findByText(
     "Paciente não encontrado.")).toBeTruthy();
@@ -82,29 +66,19 @@ test("rota desconhecida fica no layout",
       .toBeTruthy();
   });
 
-test("sem login, o detalhe leva ao login",
-  async () => {
-    esquecer();
-    api({ "/api/patients/p1": [401,
-      { error: "Não autenticado." }] });
-    const router = abrir("/pacientes/p1");
-    expect(await screen.findByLabelText(
-      "E-mail")).toBeTruthy();
-    expect(router.state.location.search)
-      .toBe("?volta=%2Fpacientes%2Fp1");
-  });
-
-const lista = () => screen.getByRole("list",
+const lista = () => screen.findByRole("list",
   { name: "Resultados" });
 const aberto = () => screen.getByRole(
   "article", { name: "Paciente aberto" });
 const abrirPaciente = async (nome: string) =>
-  userEvent.click(await within(lista())
+  userEvent.click(await within(await lista())
     .findByRole("link", { name: nome }));
+const botao = (nome: string) =>
+  within(aberto()).getByRole("button",
+    { name: nome });
 
 test("a lista mostra o nome editado",
   async () => {
-    apiFalsa(SEMENTE);
     abrir("/pacientes?q=jo");
     await abrirPaciente("João Lima");
     const nome = await within(await screen
@@ -113,17 +87,15 @@ test("a lista mostra o nome editado",
     await userEvent.clear(nome);
     await userEvent.type(nome,
       "João Lima Neto");
-    await userEvent.click(within(aberto())
-      .getByRole("button",
-        { name: "Salvar" }));
-    expect(await within(lista()).findByRole(
-      "link", { name: "João Lima Neto" }))
+    await userEvent.click(botao("Salvar"));
+    expect(await within(await lista())
+      .findByRole("link",
+        { name: "João Lima Neto" }))
       .toBeTruthy();
   });
 
 test("trocar de paciente troca o detalhe",
   async () => {
-    apiFalsa(SEMENTE);
     abrir("/pacientes?q=a");
     await abrirPaciente("Maria Souza");
     await screen.findByText(
@@ -133,11 +105,82 @@ test("trocar de paciente troca o detalhe",
       "898009876543210")).toBeTruthy();
   });
 
+// ---- capítulo 15: sessão e permissão ----
+
+test("sem sessão, vai ao login sem pedir "
+  + "o paciente", async () => {
+  const { pedidos } = apiFalsa(SEMENTE,
+    { usuario: null });
+  const router = abrir("/pacientes/p1");
+  expect(await screen.findByLabelText(
+    "E-mail")).toBeTruthy();
+  expect(router.state.location.search)
+    .toBe("?volta=%2Fpacientes%2Fp1");
+  expect(pedidos).not.toContain(
+    "GET /api/patients/p1");
+});
+
 test("recepção não vê Inativar", async () => {
-  lembrar({ nome: "Carla", papel: "recepcao" });
-  apiFalsa(SEMENTE);
+  apiFalsa(SEMENTE, { usuario: CARLA });
   abrir("/pacientes/p1");
   await screen.findByText("898001234567890");
   expect(within(aberto()).queryByRole(
-    "button", { name: "Inativar" })).toBeNull();
+    "button", { name: "Inativar" }))
+    .toBeNull();
 });
+
+test("sessão que cai no meio do trabalho: "
+  + "login e volta ao paciente", async () => {
+  const api = apiFalsa(SEMENTE);
+  const router = abrir("/pacientes/p2?q=jo");
+  await screen.findByText("898009876543210");
+  api.encerrarSessao();
+  await userEvent.click(botao("Salvar"));
+  expect(router.state.location.search).toBe(
+    "?volta=%2Fpacientes%2Fp2%3Fq%3Djo");
+  await userEvent.type(await screen
+    .findByLabelText("E-mail"), "a@b.dev");
+  await userEvent.type(screen
+    .getByLabelText("Senha"), "x");
+  await userEvent.click(screen.getByRole(
+    "button", { name: "Entrar" }));
+  expect(await screen.findByText(
+    "898009876543210")).toBeTruthy();
+  expect(router.state.location.pathname)
+    .toBe("/pacientes/p2");
+});
+
+test("403 avisa ali mesmo e não leva ao "
+  + "login", async () => {
+  const inativar =
+    "POST /api/patients/p1/inativar";
+  apiFalsa(SEMENTE,
+    { recusar: { [inativar]: 403 } });
+  const router = abrir("/pacientes/p1");
+  await screen.findByText("898001234567890");
+  await userEvent.click(botao("Inativar"));
+  await userEvent.click(screen.getByRole(
+    "button",
+    { name: "Confirmar inativação" }));
+  expect(await screen.findByText(
+    "Seu papel não pode inativar."))
+    .toBeTruthy();
+  expect(router.state.location.pathname)
+    .toBe("/pacientes/p1");
+});
+
+test("sair esquece tudo o que a tela viu",
+  async () => {
+    abrir("/pacientes/p1");
+    await screen.findByText(
+      "898001234567890");
+    await userEvent.click(screen.getByRole(
+      "button", { name: "Sair" }));
+    expect(await screen.findByLabelText(
+      "E-mail")).toBeTruthy();
+    expect(consultas.getQueryCache()
+      .findAll({ queryKey: ["pacientes"] }))
+      .toHaveLength(0);
+    expect(screen.queryByRole("button",
+      { name: "Sair" })).toBeNull();
+  });

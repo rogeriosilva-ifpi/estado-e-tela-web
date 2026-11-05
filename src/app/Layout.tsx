@@ -1,36 +1,54 @@
 import {
-  NavLink, Outlet, useMatches, useNavigate,
+  Navigate, NavLink, Outlet, useLocation,
+  useMatches, useNavigate,
 } from "react-router";
-import { pedir } from "../api/cliente.ts";
+import { esquecerSessao }
+  from "../api/consultas.ts";
+import { sair } from "../api/sessao.ts";
 import { Painel }
   from "../compartilhado/Painel.tsx";
 import { Botao }
   from "../compartilhado/Botao.tsx";
 import { ProvedorExibicao } from
   "../compartilhado/exibicao/Provedor.tsx";
-import { esquecer, usuarioAtual }
+import { useSessao }
   from "../compartilhado/sessao.ts";
 import css from "./Layout.module.css";
 import { Preferencias }
   from "./Preferencias.tsx";
+import { paraLogin } from "./protecao.ts";
 import { StatusApi } from "./StatusApi.tsx";
 
-type Handle = { titulo?: string };
+type Handle = {
+  titulo?: string; protegida?: boolean };
 
 // Moldura de todas as páginas: cabeçalho,
 // menu e o painel com o título da rota.
 export function Layout() {
-  const titulo = useMatches()
-    .map((m) => (m.handle as Handle)?.titulo)
+  const handles = useMatches()
+    .map((m) => m.handle as Handle ?? {});
+  const titulo = handles
+    .map((h) => h.titulo)
     .filter(Boolean).at(-1);
+  const protegida =
+    handles.some((h) => h.protegida);
   const navegar = useNavigate();
-  const usuario = usuarioAtual();
+  const local = useLocation();
+  const usuario = useSessao();
 
-  async function sair() {
-    await pedir("/api/auth/logout",
-      { metodo: "POST" });
-    esquecer();
-    navegar("/entrar");
+  async function sairDaqui() {
+    await sair();
+    await navegar("/entrar");
+    // o próximo a usar este computador não
+    // herda nada do cache
+    esquecerSessao();
+  }
+
+  // A sessão caiu com a tela aberta (401):
+  // daqui, ao login; depois, de volta.
+  if (protegida && usuario === null) {
+    return <Navigate replace
+      to={paraLogin(local)} />;
   }
 
   return (
@@ -53,7 +71,8 @@ export function Layout() {
           {usuario && (
             <p>{usuario.nome}{" "}
               <Botao variante="secundaria"
-                onClick={sair}>Sair</Botao>
+                onClick={sairDaqui}>
+                Sair</Botao>
             </p>)}
           <StatusApi />
           <Preferencias />
